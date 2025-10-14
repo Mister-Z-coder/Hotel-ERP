@@ -1,0 +1,73 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AssemblyName>Hotel</AssemblyName>
+    <RootNamespace>Hotel</RootNamespace>
+    <ApplicationIcon>wwwroot\ico-bingahouse.ico</ApplicationIcon>
+    <Version>2.0.0</Version>
+    <!-- Active la compilation des fichiers Razor -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwwroot\**" />
+    <Content Remove="wwwwroot\**" />
+    <EmbeddedResource Remove="wwwwroot\**" />
+    <None Remove="wwwwroot\**" />
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot\ReportFiles\Boncmdaliment.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\Boncmdboisson.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\Boncmdservice.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\Boncmd.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\FactureRestaurant.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\FactureRestaurant1.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\Facture.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\FactureCaution.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\FactureReservation.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportDeclassementsOne.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportDeclassements.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportDemandesOne.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportDemandes.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportLivraisonsOne.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportLivraisons.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportMouvements.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportSorties.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportSortiesOne.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportVentes.rdlc" />
+    <EmbeddedResource Include="wwwroot\ReportFiles\RapportReglements.rdlc" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.Reporting" Version="2.1.0" />
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.17">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.Winforms" Version="150.1652.0" />
+    <PackageReference Include="RawPrint.NetStd" Version="1.0.0" />
+    <PackageReference Include="Syncfusion.EJ2.MVC5" Version="28.2.9" />
+    <PackageReference Include="Syncfusion.Licensing" Version="28.2.9" />
+    <PackageReference Include="System.CodeDom" Version="9.0.3" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
+    <PackageReference Include="System.Web.Mvc.Extensions" Version="1.1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RDLCDesign\RDLCDesign.csproj" />
+  </ItemGroup>
+
+</Project>

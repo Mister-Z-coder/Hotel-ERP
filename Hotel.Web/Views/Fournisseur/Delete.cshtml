@@ -1,0 +1,64 @@
+﻿@model Fournisseur
+@{
+    ViewData["Title"] = "Fournisseur";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Fournisseur</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="FournisseurId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="NomFournisseur" disabled class="form-control border" />
+                    <label asp-for="NomFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="PhoneFournisseur" disabled class="form-control border" />
+                    <label asp-for="PhoneFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="AdresseFournisseur" disabled class="form-control border" />
+                    <label asp-for="AdresseFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="DomaineActivite" disabled id="TypeClient" class="form-select border">
+                        <option disabled selected>--Selectionnez le d'activité du fournisseur--</option>
+                        <option>ALIMENTATION</option>
+                        <option>BOISSON</option>
+                        <option>ALIMENTATION ET BOISSON</option>
+                    </select>
+                    <input asp-for="DomaineActivite" hidden class="form-control border" />
+                    <label asp-for="DomaineActivite" class="m-2"></label>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Fournisseur" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

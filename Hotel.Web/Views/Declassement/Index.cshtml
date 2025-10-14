@@ -1,0 +1,121 @@
+﻿@model DeclassementViewModel
+@{
+    ViewData["Title"] = "Declassement";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des demandes de Declassements</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-2 text-end">
+                <form asp-controller="Declassement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent" id="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Declassement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Motif..." asp-for="searchMotif" aria-label="Motif" id="Motif">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Declassement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date" id="Date">
+                </form>
+            </div>
+            <div class="col-3 text-end">
+                <button type="button" class="btn btn-secondary" onclick="SelectedDeclassement()">
+                    <i class="bi bi-printer"></i>
+                    Rapport
+                </button>
+            </div>
+            <div class="col-3 text-end">
+                <a class="btn btn-secondary" asp-controller="Declassement" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>
+                    Nouveau declassement
+                </a>
+            </div>
+
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Type</th>
+                    <th class="text-center align-middle">Date - Heure</th>
+                    <th class="text-center align-middle">Motif</th>
+                    <th class="text-center align-middle">Nature</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var declassement in Model.Declassement)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@declassement.Agent.NomAgent @declassement.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@declassement.TypeMouvement.TitreTypeMouvement</td>
+                        <td class="text-center align-middle">@declassement.DateMouvement.ToShortDateString() - @declassement.HeureMouvement.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@declassement.MotifDecaissement</td>
+                        <td class="text-center align-middle">@declassement.NatureMouvement</td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+
+                                <a asp-controller="Declassement" asp-action="Details" asp-route-declassementId="@declassement.MouvementId" class="btn btn-warning text-white btn-sm">
+                                    <i class="bi bi-info-circle"></i>  Détails
+                                </a>
+                                <a asp-controller="Declassement" asp-action="Update" asp-route-declassementId="@declassement.MouvementId" class="btn btn-success btn-sm">
+                                    <i class="bi bi-pencil-square"></i> Modifier
+                                </a>
+                                <a asp-controller="Declassement" asp-action="Associer" asp-route-declassementId="@declassement.MouvementId" class="btn btn-info btn-sm @(declassement.Bougers.Count() <= 0 && declassement.Mouvoirs.Count() <= 0 ? "" : "disabled")">
+                                    <i class="bi bi-cart-x-fill"></i> Declasser
+                                </a>
+                                <a asp-controller="Declassement" asp-action="Delete" asp-route-declassementId="@declassement.MouvementId" class="btn btn-danger btn-sm @(declassement.Bougers.Count() <= 0 && declassement.Mouvoirs.Count() <= 0 ? "" : "disabled")">
+                                    <i class="bi bi-trash-fill"></i> Supprimer
+                                </a>
+
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+
+

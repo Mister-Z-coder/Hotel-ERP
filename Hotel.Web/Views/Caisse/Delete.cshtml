@@ -1,0 +1,62 @@
+﻿@model Caisse
+@{
+    ViewData["Title"] = "Caisse";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer caisse</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="PosteTravailId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="TitrePosteTravail" disabled class="form-control border" />
+                    <input asp-for="TitrePosteTravail" hidden />
+                    <label asp-for="TitrePosteTravail" class="m-2"></label>
+                    <span asp-validation-for="TitrePosteTravail" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="TitreCaisse" disabled class="form-control border" />
+                    <input asp-for="TitreCaisse" hidden />
+                    <label asp-for="TitreCaisse" class="m-2"></label>
+                    <span asp-validation-for="TitreCaisse" class="text-danger"></span>
+                </div>
+                @*<div class="form-floating py-1 col-12">
+                    <input asp-for="BarCaisse" disabled class="form-control border" />
+                    <label asp-for="BarCaisse" class="m-2"></label>
+                    <span asp-validation-for="BarCaisse" class="text-danger"></span>
+                </div>*@
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="BarCaisse" class="form-select border">
+                        <option disabled selected>--Selectionnez le bar de la caisse--</option>
+                        <option>LOUAGE BAR</option>
+                        <option>SNACK BAR</option>
+                    </select>
+                    <label asp-for="BarCaisse" class="m-2"></label>
+                    <span asp-validation-for="BarCaisse" class="text-danger"></span>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Caisse" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,72 @@
+﻿@model PosteTravailViewModel
+@{
+    ViewData["Title"] = "Poste Travail";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Details Poste Travail</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="PosteTravail.PosteTravailId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="PosteTravail.TitrePosteTravail" disabled class="form-control border" />
+                    <label asp-for="PosteTravail.TitrePosteTravail" class="m-2"></label>
+                    <span asp-validation-for="PosteTravail.TitrePosteTravail" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="TypePoste" id="TypePoste" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez le type du poste de travail--</option>
+                        <option>CAISSE</option>
+                        <option>AUTRE</option>
+                    </select>
+                    <input type="hidden" asp-for="TypePoste" disabled class="form-control border" />
+                    <label asp-for="TypePoste" class="m-2">Type Poste</label>
+                    <span asp-validation-for="TypePoste" class="text-danger"></span>
+
+                </div>
+                <div class="form-floating py-1 col-12" disabled id="TitreCaisse" style="display: none;">
+                    <input asp-for="Caisse.TitreCaisse" disabled class="form-control border" />
+                    <label asp-for="Caisse.TitreCaisse" class="m-2"></label>
+                    <span asp-validation-for="Caisse.TitreCaisse" class="text-danger"></span>
+                </div>
+                @*<div class="form-floating py-1 col-12" id="BarCaisse" style="display: none;">
+                    <input asp-for="Caisse.BarCaisse" class="form-control border" />
+                    <label asp-for="Caisse.BarCaisse" class="m-2"></label>
+                    <span asp-validation-for="Caisse.BarCaisse" class="text-danger"></span>
+                </div>*@
+                <div class="form-floating py-1 col-12" id="BarCaisse"  style="display: none;">
+                    <select asp-for="Caisse.BarCaisse" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez le bar de la caisse--</option>
+                        <option>LOUNGE BAR</option>
+                        <option>SNACK BAR</option>
+                    </select>
+                    <label asp-for="Caisse.BarCaisse" class="m-2"></label>
+                    <span asp-validation-for="Caisse.BarCaisse" class="text-danger"></span>
+                </div>
+                <div class="row pt-2">
+                   
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="PosteTravail" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

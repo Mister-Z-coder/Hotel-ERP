@@ -1,0 +1,207 @@
+﻿@model ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Details Reservation</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Reservations.ReservationId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ResidentId" disabled class="form-select border" asp-items="Model.ResidentList">
+                        <option disabled selected>--Selectionnez le resident--</option>
+                    </select>
+                    <label asp-for="Reservations.ResidentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.AgentId" class="form-control border" />
+                    <label asp-for="Reservations.AgentId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ChambreId" disabled class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="Reservations.ChambreId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.ChambreId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateFinOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureFinOccupation" class="m-2"></label>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.StatutReservation" disabled id="TypeClient" class="form-select border">
+                        <option disabled selected>--Selectionnez le statut de la reservation--</option>
+                        <option>CONFIRME</option>
+                        <option>ANNULE</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.StatutReservation" class="form-control border" />
+                    <label asp-for="Reservations.StatutReservation" class="m-2"></label>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Reservations.CautionReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.CautionReservation" class="m-2"></label>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Services inclus</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center align-middle">N°</th>
+                                        <th class="text-center align-middle">Titre Service</th>
+                                        <th class="text-center align-middle">Prix Service</th>
+                                        <th class="text-center align-middle">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int j = 1;}
+                                    @foreach (var inclure in Model.Inclures)
+                                    {
+                                        <tr>
+                                            <td class="text-center align-middle fw-bold">@j</td>
+                                            <td class="text-center align-middle">@inclure.Service.NomService</td>
+                                            <td class="text-center align-middle">@inclure.Service.PrixService.00 $</td>
+                                            <td class="text-center align-middle">
+                                                @if (Model.reservationpaye is true)
+                                                {
+                                                    <div class="d-flex justify-content-center gap-2" role="group">
+                                                        <button class="btn btn-danger" disabled onclick="retraitService(@inclure.ServiceId, @Model.Reservations.ReservationId)">
+                                                            <i class="bi bi-trash-fill"></i>  Retirer
+                                                        </button>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="d-flex justify-content-center gap-2" role="group">
+                                                        <button class="btn btn-danger" onclick="retraitService(@inclure.ServiceId, @Model.Reservations.ReservationId)">
+                                                            <i class="bi bi-trash-fill"></i>  Retirer
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </td>
+                                        </tr>
+                                        j++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        @if (Model.reservationpaye is false)
+                        {
+                            <div class="col-6 col-md-3">
+                                <a class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#staticBackdropInclure">
+                                    <i class="bi bi-pin-angle-fill"></i> Inclure
+                                </a>
+                            </div>
+                        }
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="Reservation" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </div>
+                    @*Modal pour inclure service*@
+                    <div class="modal fade" id="staticBackdropInclure" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropInclureLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content rounded-3 shadow">
+                                <div class="modal-body p-4 text-center">
+                                    <h5 class="mb-4">Inclure services dans la reservation</h5>
+
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <div class="card border-1" style="max-height: 300px; overflow-y: auto;">
+                                                <div class="card-header bg-secondary text-black">
+                                                    <h5 class="mb-0">Sélection des services</h5>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="list-group list-group-flush">
+                                                        @if (Model.Services != null && Model.Services.Any())
+                                                        {
+                                                            @foreach (var service in Model.Services.OrderBy(s => s.NomService))
+                                                            {
+                                                                <label class="list-group-item d-flex justify-content-between align-items-center">
+                                                                    <div>
+                                                                        <input class="form-check-input me-2"
+                                                                               type="checkbox"
+                                                                               name="selectedServices"
+                                                                               value="@service.ServiceId"
+                                                                               id="service_@service.ServiceId">
+                                                                        <span>@service.NomService</span>
+                                                                    </div>
+                                                                    <span class="badge bg-secondary rounded-pill">@service.PrixService.00 $</span>
+                                                                </label>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="list-group-item text-muted text-center py-3">
+                                                                Aucun service disponible
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer flex-nowrap p-0">
+
+                                            <a class="btn btn-lg btn-success fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" onclick="inclureSelection(@Model.Reservations.ReservationId)">Inclure</a>
+                                            <a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Annuler</a>
+                                        </div>
+
+                                    </div>
+</form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

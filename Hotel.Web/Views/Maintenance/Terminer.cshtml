@@ -1,0 +1,88 @@
+﻿@model MaintenanceChambreViewModel
+@{
+    ViewData["Title"] = "Maintenance Chambre";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Maintenir @ViewData["Title"]</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="FinMaintenanceChambre.MaintenanceChambreId" hidden />
+
+            <div class="p-3">
+                <span class="badge text-bg-success rounded-pill">Nettoyage encours</span>
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="FinMaintenanceChambre.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <label asp-for="FinMaintenanceChambre.AgentId" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="FinMaintenanceChambre.ChambreId" disabled class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="FinMaintenanceChambre.ChambreId" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="FinMaintenanceChambre.DateDebutMaintenance" disabled class="form-control border" />
+                    <label asp-for="FinMaintenanceChambre.DateDebutMaintenance" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="FinMaintenanceChambre.HeureDebutMaintenance" disabled class="form-control border" />
+                    <label asp-for="FinMaintenanceChambre.HeureDebutMaintenance" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="FinMaintenanceChambre.ObservationDebutMaintenance" disabled class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="FinMaintenanceChambre.ObservationDebutMaintenance" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="FinMaintenanceChambre.DateFinMaintenance" class="form-control border" />
+                    <label asp-for="FinMaintenanceChambre.DateFinMaintenance" class="m-2"></label>
+                    <span asp-validation-for="FinMaintenanceChambre.DateFinMaintenance" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="FinMaintenanceChambre.HeureFinMaintenance" class="form-control border" />
+                    <label asp-for="FinMaintenanceChambre.HeureFinMaintenance" class="m-2"></label>
+                    <span asp-validation-for="FinMaintenanceChambre.HeureFinMaintenance" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="FinMaintenanceChambre.ObservationFinMaintenance" class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="FinMaintenanceChambre.ObservationFinMaintenance" class="m-2"></label>
+                    <span asp-validation-for="FinMaintenanceChambre.ObservationFinMaintenance" class="text-danger"></span>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-magic m-1"></i> Nettoyé
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Maintenance" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

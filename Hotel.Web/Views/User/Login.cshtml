@@ -1,0 +1,45 @@
+﻿@model User
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="w-50 card m-auto">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Connexion</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <center>
+                <img src="~/images/new-logo-bingahouse.jpg" style="width:200px" />
+            </center>
+            <div class="p-3">
+                <div class="text-danger" asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input type="text" asp-for="Username" class="form-control border" required />
+                    <label asp-for="Username" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12 pb-4">
+                    <input type="password" asp-for="Password" class="form-control border" required />
+                    <label asp-for="Password" class="m-2"></label>
+                </div>
+                
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-in-right"></i> Se connecter
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

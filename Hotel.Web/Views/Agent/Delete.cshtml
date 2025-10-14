@@ -1,0 +1,102 @@
+﻿@model Agent
+@{
+    ViewData["Title"] = "Agent";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Agent</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" enctype="multipart/form-data" class="row">
+            <input asp-for="AgentId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="NomAgent" disabled class="form-control border" />
+                    <label asp-for="NomAgent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="PrenomAgent" disabled class="form-control border" />
+                    <label asp-for="PrenomAgent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <div class="border p-3 rounded">
+                        <label asp-for="SexeAgent" class="form-label text-muted"></label>
+                        <div class="form-check">
+                            <input asp-for="SexeAgent" disabled class="form-check-input" type="radio" id="SexeM" value="M">
+                            <label class="form-check-label" for="SexeM">
+                                Masculin
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="SexeAgent" disabled class="form-check-input" type="radio" id="SexeF" value="F">
+                            <label class="form-check-label" for="SexeF">
+                                Feminin
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Lieu_nais_Agent" disabled class="form-control border" />
+                    <label asp-for="Lieu_nais_Agent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Date_nais_Agent" disabled class="form-control border" />
+                    <label asp-for="Date_nais_Agent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Nationalite_Agent" disabled class="form-control border" />
+                    <label asp-for="Nationalite_Agent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Fonction_Agent" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez la fonction de l'agent--</option>
+                        <option>ADMIN</option>
+                        <option>ADMINISTRATEUR</option>
+                        <option>SUPERVISEUR</option>
+                        <option>GESTIONNAIRE</option>
+                        <option>CAISSIER</option>
+                        <option>RECEPTIONNISTE</option>
+                        <option>SERVEUR</option>
+                        <option>CUISINIER</option>
+                        <option>BARMAN</option>
+                        <option>NETTOYEUR</option>
+                        <option>TECHNICIEN</option>
+                        <option>HUISSIER</option>
+                        <option>DJ</option>
+                        <option>AUTRE</option>
+                    </select>
+                    <label asp-for="Fonction_Agent" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="file" asp-for="PhotoAgent" disabled class="form-control border" accept=".jpg" />
+                    <label asp-for="PhotoAgent" class="m-2"></label>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Agent" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

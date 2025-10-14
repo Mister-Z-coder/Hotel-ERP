@@ -1,0 +1,56 @@
+﻿@{
+    ViewData["Title"] = "Reservation";
+}
+@section Scripts {
+    @if (TempData["LastReglementId"] != null)
+    {
+        <script>
+            //function imprimerFacture(reglementId) {
+            //    // Récupère la date du jour
+            //    const today = new Date();
+            //    const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+            //    fetch(`/Report/PrintPayementCaution?id=${reglementId}`)
+            //        .then(response => {
+            //            if (response.ok) {
+            //                return response.blob(); // Récupère le PDF sous forme de Blob
+            //            }
+            //            throw new Error('Erreur lors de la récupération du PDF');
+            //        })
+            //        .then(blob => {
+            //            const url = window.URL.createObjectURL(blob);
+            //            const a = document.createElement('a');
+            //            a.href = url;
+            //            a.download = `FactureCaution_${reglementId}_${formattedDate}.pdf`; // Nom du fichier avec date
+            //            document.body.appendChild(a);
+            //            a.click(); // Lance le téléchargement
+            //            a.remove(); // Retire l'élément du DOM
+            //            window.URL.revokeObjectURL(url); // Libère l'URL
+
+            //        })
+            //        .catch(error => {
+            //            console.error('Erreur:', error);
+            //        });
+            //}
+            // Fonction pour lancer l'impression
+            function imprimerFacture(reglementId) {
+                const printWindow = window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+                
+
+                // Option 1: Impression automatique après délai
+                setTimeout(() => {
+                    printWindow.print();
+                    // printWindow.close(); // À n'utiliser qu'après confirmation
+                }, 1000);
+
+                // Option 2: Bouton d'impression manuel (recommandé)
+                // Laissez l'utilisateur cliquer sur le bouton d'impression du navigateur
+            }
+
+            // Appel automatique au chargement de la page
+            document.addEventListener('DOMContentLoaded', function() {
+                imprimerFacture(@TempData["LastReglementId"]);
+            });
+        </script>
+    }
+}

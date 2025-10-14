@@ -1,0 +1,2020 @@
+﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+@*Visibilité TypeClient*@
+<script>
+    $(document).ready(function () {
+        $('#TypeClient').change(function () {
+            if ($(this).val() === 'RESIDENT') {
+                // Affichez tous les champs
+                $('#PhoneClient, #NumpieceId, #TypedocId').show();
+            } else {
+                // Masquez tous les champs
+                $('#PhoneClient, #NumpieceId, #TypedocId').hide();
+            }
+        });
+        if ($('#TypeClient').val() === 'RESIDENT') {
+            // Affichez tous les champs
+            $('#PhoneClient, #NumpieceId, #TypedocId').show();
+        } else {
+            // Masquez tous les champs
+            $('#PhoneClient, #NumpieceId, #TypedocId').hide();
+        }
+
+    });
+</script>
+
+@*Champ recherche*@
+<script>
+    $(document).ready(function () {
+        // Initialiser Select2 sur l'élément #agentSelect
+        $('#agentSelect').select2({
+            placeholder: "Rechercher un agent...", // Texte d'espace réservé
+            allowClear: true, // Permettre de désélectionner
+            width: '100%' // Ajuster la largeur
+        });
+    });
+</script>
+
+@*Visibilité champ Titre Caisse*@
+<script>
+    $(document).ready(function () {
+        //Pour Caisse
+        $('#TypePoste').change(function () {
+            if ($(this).val() === 'CAISSE') {
+                // Affichez tous les champs
+                $('#TitreCaisse').show();
+                $('#BarCaisse').show();
+            } else {
+                // Masquez tous les champs
+                $('#TitreCaisse').hide();
+                $('#BarCaisse').hide();
+            }
+        });
+
+        if ($('#TypePoste').val() === 'CAISSE') {
+            // Affichez tous les champs
+            $('#TitreCaisse').show();
+            $('#BarCaisse').show();
+        } else {
+            // Masquez tous les champs
+            $('#TitreCaisse').hide();
+            $('#BarCaisse').hide();
+        }
+
+    });
+</script>
+
+@*Incrementer et ecrementer qte aliment*@
+<script>
+    // Fonction pour incrémenter la quantité (aliments)
+    function incrementQuantityAliment(id, stock) {
+        var quantityElement = document.getElementById(id);
+        var stockElement = document.getElementById(`stock-${id.split('-')[1]}`);
+        var currentValue = parseInt(quantityElement.textContent);
+
+        // Vérifier si la nouvelle quantité ne dépasse pas le stock
+        if (currentValue + 1 <= stock) {
+            quantityElement.textContent = currentValue + 1;
+            stockElement.textContent = stock - (currentValue + 1); // Mettre à jour le stock restant
+        } else {
+            alert("La quantité ne peut pas dépasser le stock disponible.");
+        }
+    }
+
+    // Fonction pour décrémenter la quantité (aliments)
+    function decrementQuantityAliment(id) {
+        var quantityElement = document.getElementById(id);
+        var stockElement = document.getElementById(`stock-${id.split('-')[1]}`);
+        var currentValue = parseInt(quantityElement.textContent);
+
+        // Empêcher la quantité de descendre en dessous de 1
+        if (currentValue > 1) {
+            quantityElement.textContent = currentValue - 1;
+            stockElement.textContent = stock + 1; // Mettre à jour le stock restant
+        }
+    }
+
+    // Réinitialiser la quantité lorsque le modal est fermé (aliments)
+    $('#staticBackdropAliment').on('hidden.bs.modal', function () {
+        // Sélectionner tous les éléments de quantité et les réinitialiser à 1
+        document.querySelectorAll('.quantity-value').forEach(element => {
+            element.textContent = '1';
+        });
+
+        // Réinitialiser également le stock affiché (si applicable)
+        document.querySelectorAll('[id^="stock-"]').forEach(element => {
+            var alimentId = element.id.split('-')[1]; // Extraire l'ID de l'aliment
+            var quantiteEnStock = parseInt(element.dataset.originalStock); // Récupérer le stock d'origine
+            element.textContent = quantiteEnStock; // Réinitialiser le stock affiché
+        });
+    });
+</script>
+
+@*Incrementer et ecrementer qte boisson*@
+<script>
+    // Fonction pour incrémenter la quantité (boissons)
+    function incrementQuantityBoisson(button, stock) {
+        var quantityElement = button.parentElement.querySelector('.quantity-value');
+        var boissonId = quantityElement.getAttribute('data-boisson-id');
+        var stockElement = document.querySelector(`.stock[data-boisson-id="${boissonId}"]`);
+        var currentValue = parseInt(quantityElement.textContent);
+
+        // Vérifier si la nouvelle quantité ne dépasse pas le stock
+        if (currentValue + 1 <= stock) {
+            quantityElement.textContent = currentValue + 1;
+            stockElement.textContent = stock - (currentValue + 1); // Mettre à jour le stock restant
+        } else {
+            alert("La quantité ne peut pas dépasser le stock disponible.");
+        }
+    }
+
+    // Fonction pour décrémenter la quantité (boissons)
+    function decrementQuantityBoisson(button) {
+        var quantityElement = button.parentElement.querySelector('.quantity-value');
+        var boissonId = quantityElement.getAttribute('data-boisson-id');
+        var stockElement = document.querySelector(`.stock[data-boisson-id="${boissonId}"]`);
+        var currentValue = parseInt(quantityElement.textContent);
+        var currentStock = parseInt(stockElement.textContent);
+
+        // Empêcher la quantité de descendre en dessous de 1
+        if (currentValue > 1) {
+            quantityElement.textContent = currentValue - 1;
+            stockElement.textContent = currentStock + 1; // Mettre à jour le stock restant
+        }
+    }
+</script>
+
+
+@*Commande produits*@
+<script>
+    let selectedProducts = []; // Liste des produits et services sélectionnés
+
+    // Fonction pour ajouter un produit ou un service à la liste
+    function addProduct(id, name, pu, quantity, type, stock) {
+        const item = {
+            id: id,
+            name: name,
+            pu: pu,
+            quantity: type === "service" ? 1 : parseInt(quantity), // Les services ont une quantité fixe de 1
+            type: type,
+            stock: stock // Ajouter la quantité en stock
+        };
+
+        // Vérifier si l'élément est déjà dans la liste
+        const existingItem = selectedProducts.find(p => p.id === id && p.type === type);
+        if (existingItem) {
+            if (type === "service") {
+                alert("Ce service a déjà été ajouté."); // Empêcher l'ajout multiple des services
+                return;
+            } else {
+                // Vérifier si la quantité totale dépasse le stock disponible
+                const totalQuantity = existingItem.quantity + parseInt(quantity);
+                if (totalQuantity > stock) {
+                    alert(`La quantité demandée pour "${name}" dépasse le stock disponible. Stock disponible: ${stock}`);
+                    return;
+                }
+                existingItem.quantity += parseInt(quantity); // Mettre à jour la quantité pour les produits
+            }
+        } else {
+            // Vérifier si la quantité dépasse le stock disponible pour un nouvel ajout
+            if (type !== "service") {
+                if (parseInt(quantity) > stock) {
+                    alert(`La quantité demandée pour "${name}" dépasse le stock disponible. Stock disponible: ${stock}`);
+                    return;
+                }
+            }
+            selectedProducts.push(item); // Ajouter un nouvel élément
+        }
+
+        // Mettre à jour l'affichage du tableau
+        updateSelectedProductsList();
+    }
+
+    // Fonction pour mettre à jour l'affichage du tableau
+    function updateSelectedProductsList() {
+        const tableBody = document.getElementById('selectedProductsTableBody');
+        tableBody.innerHTML = ''; // Réinitialiser le tableau
+
+        let totalQuantity = 0; // Initialiser la variable pour la quantité totale
+        let totalPrice = 0; // Initialiser la variable pour le prix total
+
+        selectedProducts.forEach((item, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.name}</td>
+                <td>${item.pu}</td>
+                <td>${item.type === "service" ? "-" : item.quantity}</td> <!-- Afficher "-" pour les services -->
+                <td>
+                    <button class="btn btn-sm btn-danger" onclick="removeProduct(${index})">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+
+            // Calculer la quantité totale et le prix total
+            totalQuantity += item.type === "service" ? 1 : item.quantity; // Les services comptent comme 1
+            totalPrice += item.pu * (item.type === "service" ? 1 : item.quantity); // Montant total pour cet élément
+        });
+
+        // Afficher les totaux dans le pied de table
+        document.getElementById('totalQuantity').textContent = totalQuantity;
+        document.getElementById('totalPrice').textContent = totalPrice.toFixed(2) + ' $'; // Formatage du prix
+    }
+
+    // Fonction pour supprimer un produit ou un service de la liste
+    function removeProduct(index) {
+        selectedProducts.splice(index, 1); // Supprimer l'élément
+        updateSelectedProductsList(); // Mettre à jour l'affichage du tableau
+    }
+</script>
+
+
+@*Validation commande*@
+<script>
+    function sendSelectedProducts() {
+        if (selectedProducts.length === 0) {
+            alert("Aucun produit sélectionné.");
+            return;
+        }
+
+        //const selectedServeur = document.getElementById('selectedserveur').value;
+        //console.log("Serveur sélectionnée:", selectedServeur); // Log pour déboguer
+        //if (selectedServeur === "" || selectedServeur === "--Selectionnez le serveur--") {
+        //    alert("Veuillez sélectionner un serveur.");
+        //    return;
+        //}
+
+        const selectedTable = document.getElementById('selectedtable').value;
+        //console.log("Table sélectionnée:", selectedTable); // Log pour déboguer
+        if (selectedTable.trim() === "" || selectedTable.trim() === "--Selectionnez la table--") {
+            alert("Veuillez sélectionner une table.");
+            return;
+        }
+
+        // Récupérer le résident sélectionné
+        const selectedClient = document.getElementById('selectedclient').value;
+        //console.log("Client sélectionné:", selectedClient); // Log pour déboguer
+        if (selectedClient.trim() === "" || selectedClient.trim() === "--Selectionnez le client--") {
+            alert("Veuillez sélectionner un client.");
+            return;
+        }
+
+        // Récupérer le type de commande
+        const typeCommande = document.getElementById('typeCommande').value;
+        if (typeCommande.trim() === "" || typeCommande.trim() === "--Selectionnez le type de commande--") {
+            alert("Veuillez sélectionner un type de commande.");
+            return;
+        }
+
+        // Préparer les données à envoyer
+        const data = {
+            //serveurId: selectedServeur,
+            tableId: selectedTable,
+            clientId: selectedClient,
+            //dateOccupation: dateOccupation,
+            //heureOccupation: heureOccupation,
+            typeCommande: typeCommande,
+            products: selectedProducts
+        };
+
+        //console.log("Données envoyées :", JSON.stringify(data, null, 2)); // Log pour déboguer
+
+        // Envoyer les données au serveur
+        fetch('/ValiderCommande', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                //console.log('Response status:', response.status);
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.message); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("Commande validée avec succès !");
+                selectedProducts = []; // Réinitialiser la liste
+                updateSelectedProductsList(); // Mettre à jour l'affichage
+
+                // Réinitialiser les champs de formulaire
+                //document.getElementById('selectedserveur').value = "";
+                document.getElementById('selectedtable').value = "";
+                document.getElementById('selectedclient').value = "";
+                document.getElementById('typeCommande').value = "";
+                //document.getElementById('dateOccupation').value = "";
+                //document.getElementById('heureOccupation').value = "";
+                // Fermer la fenêtre modale
+                const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropRecu'));
+                modal.hide();
+
+                //// Lancer l'impression après la fermeture du modal
+                //modal._element.addEventListener('hidden.bs.modal', () => {
+                //    const typeGroups = {};
+
+                //    // Parcourir les détails et regrouper par type de produit
+                //    data.details.forEach(detail => {
+                //        const typeProd = detail.typeProd;
+
+                //        // Initialiser le groupe si pas encore existant
+                //        if (!typeGroups[typeProd]) {
+                //            typeGroups[typeProd] = [];
+                //        }
+
+                //        // Ajouter l'ID de commande au groupe correspondant
+                //        typeGroups[typeProd].push(detail.commandeId);
+                //    });
+
+                //    // Lancer l'impression pour chaque type de produit
+                //    Object.keys(typeGroups).forEach(typeProd => {
+                //        // Obtenir un ID de commande (vous pouvez choisir de l'utiliser différemment si nécessaire)
+                //        const commandeId = typeGroups[typeProd][0]; // Prendre le premier ID de commande pour l'impression
+                //        window.open(`/Report/Print?id=${commandeId}&type=${typeProd}`, '_blank'); // Ouvrir le rapport dans un nouvel onglet
+                //    });
+                //});
+                modal._element.addEventListener('hidden.bs.modal', () => {
+                    const typeGroups = {};
+
+                    // Parcourir les détails et regrouper par type de produit
+                    data.details.forEach(detail => {
+                        const typeProd = detail.typeProd;
+
+                        // Initialiser le groupe si pas encore existant
+                        if (!typeGroups[typeProd]) {
+                            typeGroups[typeProd] = [];
+                        }
+
+                        // Ajouter l'ID de commande au groupe correspondant
+                        typeGroups[typeProd].push(detail.commandeId);
+                    });
+
+                    //console.log("Tableau typeGroups :", typeGroups);
+
+                    // Séparer les services, aliments et boissons
+                    const services = [];
+                    const aliments = [];
+                    const boissons = [];
+
+                    Object.keys(typeGroups).forEach(typeProd => {
+                        if (typeProd.startsWith("service")) {
+                            // Si c'est un service, ajouter tous les IDs de commande
+                            services.push(...typeGroups[typeProd]);
+                        } else if (typeProd.startsWith("aliment")) {
+                            // Si c'est un aliment, ajouter tous les IDs de commande
+                            aliments.push(...typeGroups[typeProd]);
+                        } else if (typeProd.startsWith("boisson")) {
+                            // Si c'est une boisson, ajouter tous les IDs de commande
+                            boissons.push(...typeGroups[typeProd]);
+                        }
+                    });
+
+                    // Imprimer les bons pour les services (un bon par service)
+                    services.forEach(commandeId => {
+                        window.open(`/Report/Print?id=${commandeId}&type=service`, '_blank');
+
+                    });
+
+                    // Imprimer un bon pour tous les aliments (un seul bon)
+                    if (aliments.length > 0) {
+                        const commandeId = aliments[0]; // Prendre le premier ID de commande
+                        window.open(`/Report/Print?id=${commandeId}&type=aliment`, '_blank');
+
+                    }
+
+                    // Imprimer un bon pour toutes les boissons (un seul bon)
+                    if (boissons.length > 0) {
+                        const commandeId = boissons[0]; // Prendre le premier ID de commande
+                        window.open(`/Report/Print?id=${commandeId}&type=boisson`, '_blank');
+
+                    }
+                });
+
+
+                ////// Actualiser la page après la fermeture du modal
+                modal._element.addEventListener('hidden.bs.modal', () => {
+                    window.location.reload();
+                });
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert(error.message || "Une erreur s'est produite lors de la validation de la commande.");
+            });
+    }
+</script>
+
+
+@*<script>
+        // Lorsque le modal est sur le point d'être affiché
+        document.getElementById('staticBackdropReglement').addEventListener('show.bs.modal', function (event) {
+            // Récupérer le bouton qui a déclenché le modal
+            const button = event.relatedTarget;
+
+            // Récupérer les données de la commande
+            const commandeId = button.getAttribute('numcommande');
+
+            // Mettre à jour les champs du modal
+            document.getElementById('numCommandeReglement').value = commandeId;
+            // Vous pouvez ajouter d'autres champs si nécessaire
+        });
+    </script>
+
+    <script>
+        // Lorsque l'utilisateur clique sur le bouton "Payer la commande"
+        document.getElementById('payerCommande').addEventListener('click', function () {
+            // Récupérer le numéro de commande du premier modal
+            const numCommande = document.getElementById('numcommande').value;
+
+            // Mettre à jour le champ "numCommandeReglement" dans le deuxième modal
+            document.getElementById('numCommandeReglement').value = numCommande;
+        });
+    </script>*@
+
+@*Validation payement commande*@
+<script>
+    function sendSelectedCommande() {
+        // Récupérer les valeurs du modal
+        const commandeId = document.getElementById('numCommandeReglement').value;
+        const modeReglement = document.getElementById('selectedmreglement').value;
+        const devise = document.getElementById('selecteddevise').value;
+        const typeReglement = document.getElementById('selectedtreglement').value;
+        const posteTravail = document.getElementById('selectedcaisse').value;
+        const montantReglement = document.getElementById('totalCommandeReglement').value;
+        //const motifReglement = document.getElementById('motifreglement').value;
+
+        // Vérifier chaque champ individuellement
+
+        if (modeReglement.trim() === "" || modeReglement.trim() === "--Sélectionnez le mode de règlement--") {
+            alert('Le champ mode de règlement est obligatoire.');
+            return;
+        }
+        if (devise.trim() === "" || devise.trim() === "--Sélectionnez la devise--") {
+            alert('Le champ devise est obligatoire.');
+            return;
+        }
+        if (typeReglement.trim() === "" || typeReglement.trim() === "--Sélectionnez le type de règlement--") {
+            alert('Le champ type de règlement est obligatoire.');
+            return;
+        }
+        if (posteTravail.trim() === "" || posteTravail.trim() === "--Sélectionnez le poste de travail--") {
+            alert('Le champ poste de travail est obligatoire.');
+            return;
+        }
+        //if (montantReglement.trim() === "" || montantReglement.trim() === "0") {
+        //    alert('Le champ montant de règlement est obligatoire.');
+        //    return;
+        //}
+        const montantSansFC = montantReglement.replace(".00 $", "");
+
+
+        //if (motifReglement.trim() === "") {
+        //    alert('Le champ motif de règlement est obligatoire.');
+        //    return;
+        //}
+
+        // Créer un objet avec les données
+        const data = {
+            CommandeId: commandeId,
+            ModeReglementId: modeReglement,
+            DeviseId: devise,
+            TypeReglementId: typeReglement,
+            PosteTravailId: posteTravail,
+            MontantReglement: montantSansFC,
+            //MotifReglement: motifReglement
+        };
+
+        // Envoyer les données au serveur via une requête AJAX
+        fetch('/ValiderReglement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Règlement validé avec succès !');
+                    // Récupérer l'ID du règlement
+                    const reglementId = result.id;
+                    //console.log('ID du règlement :', reglementId);
+
+
+                    // Fermer le modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropReglement'));
+                    modal.hide();
+
+                    // Lancer l'impression ou d'autres actions
+                    // Appel automatique au chargement de la page
+
+                    lancerImpression(reglementId);
+
+                    // Recharger la page ou mettre à jour la liste des commandes
+                    location.reload();
+                    //setTimeout(() => {
+
+                    //    //printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                    //     // À décommenter si vous voulez recharger après impression
+                    //}, 1000);
+
+
+                } else {
+                    alert('Erreur lors de la validation du règlement : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la validation du règlement.');
+            });
+
+        // Fonction pour lancer l'impression
+        function lancerImpression(reglementId) {
+            // Ouvrir une nouvelle fenêtre ou rediriger vers une page d'impression
+            //window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+            window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+            // Option 1: Impression automatique après délai
+
+        }
+        function lancerImpressionsss(reglementId) {
+            // Récupère la date du jour
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+            fetch(`/Report/PrintPayementFacture?id=${reglementId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // Récupère le PDF sous forme de Blob
+                    }
+                    throw new Error('Erreur lors de la récupération du PDF');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Facture_${reglementId}_${formattedDate}.pdf`; // Nom du fichier avec date
+                    document.body.appendChild(a);
+                    a.click(); // Lance le téléchargement
+                    a.remove(); // Retire l'élément du DOM
+                    window.URL.revokeObjectURL(url); // Libère l'URL
+
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                });
+        }
+
+    }
+
+
+</script>
+
+@*Validation payement reservation*@
+<script>
+    function sendSelectedReservation() {
+        // Récupérer les valeurs du modal
+        // Tableau pour stocker les services
+        const servicesArray = [];
+
+        // Fonction pour récupérer les services
+        document.querySelectorAll('.service-row').forEach(row => {
+            const serviceId = row.getAttribute('data-id');
+            const serviceName = row.cells[1].innerText; // Nom du service
+            const servicePrice = row.cells[2].innerText; // Prix du service
+
+            // Ajouter les données au tableau
+            servicesArray.push({
+                id: serviceId,
+                nom: serviceName,
+                prix: servicePrice
+            });
+        });
+        const reservationId = document.getElementById('numReservationReglement').value;
+        const modeReglement = document.getElementById('selectedmreglement').value;
+        const devise = document.getElementById('selecteddevise').value;
+        const typeReglement = document.getElementById('selectedtreglement').value;
+        const posteTravail = document.getElementById('selectedcaisse').value;
+        const montantReglement = document.getElementById('totalReservationReglement').value;
+        //const motifReglement = document.getElementById('motifreglement').value;
+
+        // Vérifier chaque champ individuellement
+
+        if (modeReglement.trim() === "" || modeReglement.trim() === "--Sélectionnez le mode de règlement--") {
+            alert('Le champ mode de règlement est obligatoire.');
+            return;
+        }
+        if (devise.trim() === "" || devise.trim() === "--Sélectionnez la devise--") {
+            alert('Le champ devise est obligatoire.');
+            return;
+        }
+        if (typeReglement.trim() === "" || typeReglement.trim() === "--Sélectionnez le type de règlement--") {
+            alert('Le champ type de règlement est obligatoire.');
+            return;
+        }
+        if (posteTravail.trim() === "" || posteTravail.trim() === "--Sélectionnez le poste de travail--") {
+            alert('Le champ poste de travail est obligatoire.');
+            return;
+        }
+        //if (montantReglement.trim() === "" || montantReglement.trim() === "0") {
+        //    alert('Le champ montant de règlement est obligatoire.');
+        //    return;
+        //}
+        const montantSansFC = montantReglement.replace(".00 $", "");
+
+
+        //if (motifReglement.trim() === "") {
+        //    alert('Le champ motif de règlement est obligatoire.');
+        //    return;
+        //}
+
+        // Créer un objet avec les données
+        const data = {
+            ReservationId: reservationId,
+            ModeReglementId: modeReglement,
+            DeviseId: devise,
+            TypeReglementId: typeReglement,
+            PosteTravailId: posteTravail,
+            MontantReglement: montantSansFC,
+            ServicesArray: servicesArray
+            //MotifReglement: motifReglement
+        };
+        //console.log(data);
+        // Envoyer les données au serveur via une requête AJAX
+        fetch('/ValiderReglementReservation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Règlement validé avec succès !');
+                    // Récupérer l'ID du règlement
+                    const reglementId = result.id;
+                    //console.log('ID du règlement :', reglementId);
+
+                    // Fermer le modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropReglement'));
+                    modal.hide();
+
+                    // Lancer l'impression ou d'autres actions
+                    // Appel automatique au chargement de la page';
+
+                    lancerImpression(reglementId);
+
+                    //setTimeout(() => {
+
+                    //    //printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                    //    location.reload(); // À décommenter si vous voulez recharger après impression
+                    //}, 3000);
+
+                } else {
+                    alert('Erreur lors de la validation du règlement : vérifier que ce réglement n\' a pas encore été effectué' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la validation du règlement.');
+            });
+
+        // Fonction pour lancer l'impression
+        function lancerImpression(reglementId) {
+            // Ouvrir une nouvelle fenêtre ou rediriger vers une page d'impression
+            //window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+
+            const printWindow = window.open(`/Report/PrintPayementReservation?id=${reglementId}`, '_blank');
+
+            // Option 1: Impression automatique après délai
+            setTimeout(() => {
+                printWindow.print();
+                // printWindow.close(); // À n'utiliser qu'après confirmation
+            }, 1000);
+        }
+        function lancerImpressionfake(reglementId) {
+            // Récupère la date du jour
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+            fetch(`/Report/PrintPayementReservation?id=${reglementId}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // Récupère le PDF sous forme de Blob
+                    }
+                    throw new Error('Erreur lors de la récupération du PDF');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `FactureReservation_${reglementId}_${formattedDate}.pdf`; // Nom du fichier avec date
+                    document.body.appendChild(a);
+                    a.click(); // Lance le téléchargement
+                    a.remove(); // Retire l'élément du DOM
+                    window.URL.revokeObjectURL(url); // Libère l'URL
+
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                });
+        }
+    }
+</script>
+
+<script>
+    function associerSelection(fournisseurId) {
+    // Récupérer les aliments sélectionnés
+    const selectedAliments = [];
+    document.querySelectorAll('input[name="selectedAliments"]:checked').forEach(checkbox => {
+        selectedAliments.push(parseInt(checkbox.value));
+    });
+
+    // Récupérer les boissons sélectionnées
+    const selectedBoissons = [];
+    document.querySelectorAll('input[name="selectedBoissons"]:checked').forEach(checkbox => {
+        selectedBoissons.push(parseInt(checkbox.value));
+    });
+
+    // Vérifier qu'au moins un élément est sélectionné
+    if (selectedAliments.length === 0 && selectedBoissons.length === 0) {
+        alert('Veuillez sélectionner au moins un aliment ou une boisson');
+        return;
+    }
+
+    // Préparer les données à envoyer
+    const data = {
+        AlimentIds: selectedAliments,
+        BoissonIds: selectedBoissons
+    };
+
+    @*// Envoyer les données au serveur (AJAX)
+    $.ajax({
+        url: '@Url.Action("AssocierSelections", "VotreController")',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        success: function(response) {
+            // Fermer la modal ou afficher un message de succès
+            $('#votreModalId').modal('hide');
+            alert('Association réussie !');
+            // Rafraîchir la page si nécessaire
+            location.reload();
+        },
+        error: function(xhr) {
+            alert('Une erreur est survenue: ' + xhr.responseText);
+        }
+    });*@
+    // Envoyer les données au serveur via une requête AJAX
+        fetch(`/Fournisseur/AssocierProduits?fournisseurId=${fournisseurId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Produits associés avec succès !');
+
+                // Fermer le modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropAssocier'));
+                modal.hide();
+
+                // Recharger la page ou mettre à jour
+                location.reload();
+            } else {
+                alert('Erreur lors de l\'association des produits : ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erreur :', error);
+            alert('Une erreur s\'est produite lors de l\'association des produits.');
+        });
+}
+</script>
+
+<script>
+    function dissocierProduits(produitId, fournisseurId, type) {
+        // Préparer les données sous forme d'objet
+        const data = {
+            produitId: produitId,
+            fournisseurId: fournisseurId,
+            type: type
+        };
+
+        // Envoyer les données au serveur via une requête AJAX
+        //fetch('/Fournisseur/DissocierProduits', {
+        //    method: 'POST',
+        //    headers: {
+        //        'Content-Type': 'application/json'
+        //    },
+        //    body: JSON.stringify(data)
+        //})
+        //    .then(response => {
+        //        if (!response.ok) {
+        //            throw new Error('Network response was not ok');
+        //        }
+        //        return response.json();
+        //    })
+        //    .then(result => {
+        //        if (result.success) {
+        //            alert('Produits dissociés avec succès !');
+        //            // Recharger la page ou mettre à jour
+        //            location.reload();
+        //        } else {
+        //            alert('Erreur lors de la dissociation des produits : ' + result.message);
+        //        }
+        //    })
+        //    .catch(error => {
+        //        console.error('Erreur :', error);
+        //        alert('Une erreur s\'est produite lors de la dissociation des produits : ' + error.message);
+        //    });
+        fetch(`/Fournisseur/DissocierProduits`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert(result.message);
+
+
+                    // Recharger la page ou mettre à jour
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la dissociation des produits : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la dissociation des produits.');
+            });
+    }
+</script>
+@*Details commande*@
+<script>
+    // Lorsque le modal de détails de la commande est sur le point d'être affiché
+    document.getElementById('staticBackdropReglementdetails').addEventListener('show.bs.modal', function (event) {
+        // Récupérer le bouton qui a déclenché le modal
+        const button = event.relatedTarget;
+
+        // Récupérer l'ID de la commande
+        const commandeId = button.getAttribute('data-commande-id');
+
+        // Mettre à jour le champ "numcommande" dans le premier modal
+        document.getElementById('numcommande').value = commandeId;
+
+        // Récupérer les détails de la commande via une requête AJAX
+        fetch(`/GetDetailsCommande?commandeId=${commandeId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Vider le tableau des détails
+                const tbody = document.getElementById('detailsCommandeBody');
+                tbody.innerHTML = '';
+
+                // Initialiser le total
+                let totalCommande = 0;
+
+                // Ajouter les lignes pour chaque produit/service
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${item.datecommande}</td>
+                        <td>${item.table}</td>
+                        <td>${item.client}</td>
+                        <td>${item.agent}</td>
+                        <td>${item.nom}</td>
+                        <td>${item.quantite}</td>
+                        <td>${item.prixUnitaire}</td>
+                        <td>${item.total} $</td>
+                    `;
+                    tbody.appendChild(row);
+
+                    // Ajouter le montant au total
+                    totalCommande += item.total;
+                });
+
+                // Mettre à jour le total dans le footer
+                document.getElementById('totalCommande').textContent = `${totalCommande.toFixed(2)} $`;
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la récupération des détails de la commande.');
+            });
+    });
+
+    // Lorsque le modal de règlement est sur le point d'être affiché
+    document.getElementById('staticBackdropReglement').addEventListener('show.bs.modal', function (event) {
+        // Récupérer le numéro de commande du premier modal
+        const numCommande = document.getElementById('numcommande').value;
+
+        // Récupérer le total de la commande du premier modal
+        const totalCommande = document.getElementById('totalCommande').textContent;
+
+        // Mettre à jour les champs dans le deuxième modal
+        document.getElementById('numCommandeReglement').value = numCommande;
+        document.getElementById('totalCommandeReglement').value = totalCommande; // Supprimer " FC" pour ne garder que le nombre
+    });
+
+</script>
+
+<script>
+    // Lorsque le modal de détails de la commande est sur le point d'être affiché
+    document.getElementById('staticBackdropHistorique').addEventListener('show.bs.modal', function (event) {
+
+
+        // Récupérer l'historique des reglements via une requête AJAX
+        fetch(`/GetHistoriqueReglement`)
+            .then(response => response.json())
+            .then(data => {
+                // Vider le tableau des historiques
+                const tbody = document.getElementById('detailsHistoriqueBody');
+                tbody.innerHTML = '';
+
+                // Initialiser un objet pour les totaux par devise et un total général
+                const totalsByCurrency = {};
+                let totalGeneral = 0;
+
+                // Ajouter les lignes des règlements
+                data.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${item.numfact}</td>
+                <td>${item.numcmd}</td>
+                <td>${item.dateRegl}</td>
+                <td>${item.client}</td>
+                <td>${item.agent}</td>
+                <td>${item.devise}</td>
+                <td>${parseFloat(item.montant).toFixed(2)}</td>
+                <td class="text-center align-middle">
+                            <a class="btn btn-sm btn-success"
+                               onclick="lancerImpressionFacture(${item.numfact})">
+                                <i class="bi bi-receipt-cutoff"></i>
+                            </a>
+                        </td>
+            `;
+                    tbody.appendChild(row);
+
+                    // Accumuler le montant par devise
+                    const currency = item.devise;
+                    const montant = parseFloat(item.montant);
+                    totalGeneral += montant; // Ajouter au total général
+
+                    if (!totalsByCurrency[currency]) {
+                        totalsByCurrency[currency] = 0;
+                    }
+                    totalsByCurrency[currency] += montant;
+                });
+
+                // Afficher les totaux groupés par devise
+                const footer = document.getElementById('totalReglement');
+                footer.innerHTML = ''; // Vider le footer avant d'ajouter les nouveaux totaux
+
+                // Afficher les totaux par devise
+                for (const [devise, total] of Object.entries(totalsByCurrency)) {
+                    const totalRow = document.createElement('tr');
+                    totalRow.innerHTML = `
+                <td colspan="7" class="text-end"><strong>Total encaissé en (${devise})</strong></td>
+                <td colspan="1" class="fw-bold">${total.toFixed(2)}</td>
+            `;
+                    footer.appendChild(totalRow);
+                }
+
+                // Afficher le total général
+                const totalGeneralRow = document.createElement('tr');
+                totalGeneralRow.innerHTML = `
+            <td colspan="7" class="text-end"><strong>Total général</strong></td>
+            <td colspan="1" class="fw-bold">${totalGeneral.toFixed(2)}</td>
+        `;
+                footer.appendChild(totalGeneralRow);
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la récupération de l\'historique des règlements.');
+            });
+    });
+    function lancerImpressionFacture(reglementId) {
+        // Ouvrir une nouvelle fenêtre ou rediriger vers une page d'impression
+        //window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+        window.open(`/Report/PrintPayementFacture?id=${reglementId}`, '_blank');
+        // Option 1: Impression automatique après délai
+
+    }
+</script>
+<!-- A supprimer -->
+
+<script>
+    function lancerImpressionFactureHistorique(reglementId) {
+        // Récupère la date du jour
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+        fetch(`/Report/PrintPayementFacture?id=${reglementId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.blob(); // Récupère le PDF sous forme de Blob
+                }
+                throw new Error('Erreur lors de la récupération du PDF');
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Facture_${reglementId}_${formattedDate}.pdf`; // Nom du fichier avec date
+                document.body.appendChild(a);
+                a.click(); // Lance le téléchargement
+                a.remove(); // Retire l'élément du DOM
+                window.URL.revokeObjectURL(url); // Libère l'URL
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+    }
+</script>
+<!-- visionnage de la photo -->
+<script>
+    function openModal(src) {
+        document.getElementById('modalImage').src = src;
+        document.getElementById('imageModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = 'none';
+    }
+</script>
+
+<script>
+    function retraitService(serviceId, reservationId) {
+        const data = {
+            serviceId: serviceId,
+            reservationId: reservationId
+        };
+
+        fetch(`/Reservation/RetirerService`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                // Vérifie si la réponse est OK (status 200-299)
+                if (!response.ok) {
+                    throw new Error('Erreur réseau : ' + response.status);
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('Services retirés avec succès !');
+
+                    location.reload();
+                } else {
+                    alert('Erreur lors du retrait des services : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors du retrait des services : ' + error.message);
+            });
+    }
+</script>
+
+<script>
+    function inclureSelection(reservationId) {
+        // Récupérer les services sélectionnés
+        const selectedServices = [];
+        document.querySelectorAll('input[name="selectedServices"]:checked').forEach(checkbox => {
+            selectedServices.push(parseInt(checkbox.value));
+        });
+
+
+        // Vérifier qu'au moins un élément est sélectionné
+        if (selectedServices.length === 0) {
+            alert('Veuillez sélectionner au moins un service');
+            return;
+        }
+
+        // Préparer les données à envoyer
+        const data = {
+            ServiceIds: selectedServices
+        };
+
+        // Envoyer les données au serveur via une requête AJAX
+        fetch(`/Reservation/InsertionServices?reservationId=${reservationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Services inclus avec succès !');
+
+                    // Fermer le modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropInclure'));
+                    modal.hide();
+
+                    // Recharger la page ou mettre à jour
+                    location.reload();
+                } else {
+                    alert('Erreur lors de l\'inclusion des services : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de l\'inclusion des services.');
+            });
+    }
+</script>
+
+<script>
+    function SelectedReglement() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const motif = document.getElementById('Motif').value;
+        const Datefin = document.getElementById('Datefin').value;
+        const Datedebut = document.getElementById('Datedebut').value;
+
+        if (!Datefin || !Datedebut) {
+            alert("Veuillez remplir les deux champs de date");
+            return false;
+        }
+
+        const data = {
+            //agent: agent,
+            //caisse: caisse,
+            motif: motif,
+            Datefin: Datefin,
+            Datedebut: Datedebut
+        };
+
+        fetch('/Reglement/GenererDonnesRapport', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('Génération du rapport en cours...');
+                    lancerImpressionRapportReglements(data);
+                } else {
+                    alert('Erreur lors de la génération du rapport : ' + (result.message || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la génération du rapport : ' + error.message);
+            });
+
+        function lancerImpressionRapportReglements(data) {
+            const printWindow = window.open(`/Report/PrintReglementRapport?motif=${data.motif}&debut=${data.Datedebut}&fin=${data.Datefin}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 3000);
+        }
+
+
+    }
+    function lancerImpressionx(data) {
+        // Récupère la date du jour
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+        fetch(`/Report/PrintReglementRapport?motif=${data.motif}&debut=${data.Datedebut}&fin=${data.Datefin}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.blob(); // Récupère le PDF sous forme de Blob
+                }
+                throw new Error('Erreur lors de la récupération du PDF');
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RapportReglement_${formattedDate}.pdf`; // Nom du fichier avec date
+                document.body.appendChild(a);
+                a.click(); // Lance le téléchargement
+                a.remove(); // Retire l'élément du DOM
+                window.URL.revokeObjectURL(url); // Libère l'URL
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+            });
+    }
+</script>
+<script>
+    document.getElementById('searchService').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const services = document.querySelectorAll('.service-item');
+
+        services.forEach(service => {
+            const serviceName = service.querySelector('.card-title').textContent.toLowerCase();
+            const serviceDesc = service.querySelector('.card-text small').textContent.toLowerCase();
+
+            if (serviceName.includes(searchTerm) || serviceDesc.includes(searchTerm)) {
+                service.style.display = 'block';
+            } else {
+                service.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<script>
+    document.getElementById('searchBoisson').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const boissons = document.querySelectorAll('.boisson-item');
+
+        boissons.forEach(boisson => {
+            const boissonName = boisson.querySelector('.card-title').textContent.toLowerCase();
+            const boissonUnit = boisson.querySelector('.card-text small').textContent.toLowerCase();
+
+            if (boissonName.includes(searchTerm) || boissonUnit.includes(searchTerm)) {
+                boisson.style.display = 'block';
+            } else {
+                boisson.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('searchAliment').addEventListener('input', function () {
+        const searchTerm = this.value.toLowerCase();
+        const aliments = document.querySelectorAll('.aliment-item');
+
+        aliments.forEach(aliment => {
+            const alimentName = aliment.querySelector('.card-title').textContent.toLowerCase();
+            const alimentUnit = aliment.querySelector('.card-text small').textContent.toLowerCase();
+
+            if (alimentName.includes(searchTerm) || alimentUnit.includes(searchTerm)) {
+                aliment.style.display = 'block';
+            } else {
+                aliment.style.display = 'none';
+            }
+        });
+    });
+</script>
+<script>
+    function filterTable() {
+        const searchCommandeId = document.getElementById('searchCommandeId').value.toLowerCase();
+        const searchTable = document.getElementById('searchTable').value.toLowerCase();
+        const searchClient = document.getElementById('searchClient').value.toLowerCase();
+        const table = document.getElementById('commandesTable');
+        const rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            const commandeId = cells[1].textContent.toLowerCase();
+            const tableName = cells[4].textContent.toLowerCase();
+            const clientName = cells[3].textContent.toLowerCase();
+
+            if (
+                commandeId.includes(searchCommandeId) &&
+                tableName.includes(searchTable) &&
+                clientName.includes(searchClient)
+            ) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    }
+</script>
+
+@*<script>
+        function filterHistorique() {
+            const searchCommandeId = document.getElementById('searchCommandeId').value.toLowerCase();
+            const searchTable = document.getElementById('searchTable').value.toLowerCase();
+            const searchClient = document.getElementById('searchClient').value.toLowerCase();
+            const table = document.getElementById('historiqueTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                const commandeId = cells[1].textContent.toLowerCase();
+                const tableName = cells[4].textContent.toLowerCase();
+                const clientName = cells[3].textContent.toLowerCase();
+
+                if (
+                    commandeId.includes(searchCommandeId) &&
+                    tableName.includes(searchTable) &&
+                    clientName.includes(searchClient)
+                ) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+    </script>*@
+<script>
+    function filterHistorique() {
+        const searchCommandeId = document.getElementById('searchCommandeId').value.toLowerCase();
+        const searchClient = document.getElementById('searchClient').value.toLowerCase();
+        const tbody = document.getElementById('detailsHistoriqueBody');
+        const rows = tbody.getElementsByTagName('tr');
+
+        // Initialiser les totaux par devise et le total général
+        const totalsByCurrency = {};
+        let totalGeneral = 0;
+
+        // Filtrer les lignes et calculer les totaux
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].getElementsByTagName('td');
+            const commandeId = cells[2].textContent.toLowerCase();
+            const clientName = cells[4].textContent.toLowerCase();
+            const montant = parseFloat(cells[7].textContent);
+
+            // Vérifier si la ligne correspond aux critères de recherche
+            if (
+                commandeId.includes(searchCommandeId) &&
+                clientName.includes(searchClient)
+            ) {
+                rows[i].style.display = ''; // Afficher la ligne
+                totalGeneral += montant; // Ajouter au total général
+
+                const currency = cells[6].textContent; // Devise
+                if (!totalsByCurrency[currency]) {
+                    totalsByCurrency[currency] = 0;
+                }
+                totalsByCurrency[currency] += montant; // Ajouter au total par devise
+            } else {
+                rows[i].style.display = 'none'; // Masquer la ligne
+            }
+        }
+
+        // Afficher les totaux groupés par devise
+        const footer = document.getElementById('totalReglement');
+        footer.innerHTML = ''; // Vider le footer avant d'ajouter les nouveaux totaux
+
+        // Afficher les totaux par devise
+        for (const [devise, total] of Object.entries(totalsByCurrency)) {
+            const totalRow = document.createElement('tr');
+            totalRow.innerHTML = `
+             <td colspan="7" class="text-end"><strong>Total encaissé en (${devise})</strong></td>
+                <td colspan="1" class="text-center align-middle fw-bold">${total.toFixed(2)}</td>
+        `;
+            footer.appendChild(totalRow);
+        }
+
+        // Afficher le total général
+        const totalGeneralRow = document.createElement('tr');
+        totalGeneralRow.innerHTML = `
+         <td colspan="7" class="text-end"><strong>Total général </strong></td>
+         <td colspan="1" class="text-center align-middle fw-bold">${totalGeneral.toFixed(2)}</td>
+    `;
+        footer.appendChild(totalGeneralRow);
+    }
+</script>
+
+<script>
+    function SelectedVentesAgent(Agent) {
+        const CommandeId = document.getElementById('searchCommandeId').value;
+        const Client = document.getElementById('searchClient').value;
+        const Datefin = document.getElementById('Datefin').value;
+        const Datedebut = document.getElementById('Datedebut').value;
+        if (!Datefin || !Datedebut) {
+            alert("Veuillez remplir les deux champs de date");
+            return false;
+        }
+
+        const data = {
+            CommandeId: CommandeId,
+            Client: Client,
+            Datefin: Datefin,
+            Datedebut: Datedebut
+        };
+
+        fetch('/PointdeVente/GenererDonnesRapport', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('Génération du rapport en cours...');
+                    lancerImpressionRapportVentes(data, Agent);
+                } else {
+                    alert('Erreur lors de la génération du rapport : ' + (result.message || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la génération du rapport : ' + error.message);
+            });
+
+        function lancerImpressionRapportVentes(data, Agent) {
+            const printWindow = window.open(`/Report/PrintVenteRapport?debut=${data.Datedebut}&fin=${data.Datefin}&caissier=${Agent}`, '_blank');
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+        function lancerImpressionysc(data, Agent) {
+            // Récupère la date du jour
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0]; // Format YYYY-MM-DD
+
+            fetch(`/Report/PrintVenteRapport?debut=${data.Datedebut}&fin=${data.Datefin}&caissier=${Agent}`)
+                .then(response => {
+                    if (response.ok) {
+                        return response.blob(); // Récupère le PDF sous forme de Blob
+                    }
+                    throw new Error('Erreur lors de la récupération du PDF');
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `RapportVente_${Agent}_${formattedDate}.pdf`; // Nom du fichier avec date
+                    document.body.appendChild(a);
+                    a.click(); // Lance le téléchargement
+                    a.remove(); // Retire l'élément du DOM
+                    window.URL.revokeObjectURL(url); // Libère l'URL
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                });
+        }
+    }
+</script>
+
+<script>
+    function associerSelectionDemande(demandeId) {
+        const selectedAliments = [];
+        document.querySelectorAll('input[name="selectedAliments"]:checked').forEach(checkbox => {
+            const quantityInput = document.querySelector(`input[name="quantities_aliment[${checkbox.value}]"]`);
+            const quantity = parseInt(quantityInput.value);
+
+            if (quantity > 0) {
+                selectedAliments.push({ id: parseInt(checkbox.value), quantite: quantity });
+            }
+        });
+
+        const selectedBoissons = [];
+        document.querySelectorAll('input[name="selectedBoissons"]:checked').forEach(checkbox => {
+            const quantityInput = document.querySelector(`input[name="quantities_boisson[${checkbox.value}]"]`);
+            const quantity = parseInt(quantityInput.value);
+
+            if (quantity > 0) {
+                selectedBoissons.push({ id: parseInt(checkbox.value), quantite: quantity });
+            }
+        });
+
+        if (selectedAliments.length === 0 && selectedBoissons.length === 0) {
+            alert('Veuillez sélectionner au moins un aliment ou une boisson avec une quantité supérieure à 0.');
+            return;
+        }
+
+        const data = {
+            AlimentIds: selectedAliments,
+            BoissonIds: selectedBoissons
+        };
+
+        fetch(`/Demande/AssocierProduits?demandeId=${demandeId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Produits demandés avec succès !');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropAssocier'));
+                    modal.hide();
+                    location.reload();
+                } else {
+                    alert('Erreur lors de l\'association des produits : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de l\'association des produits.');
+            });
+    }
+</script>
+
+<script>
+    function dissocierProduitsDemande(produitId, demandeId, type) {
+        // Préparer les données sous forme d'objet
+        const data = {
+            produitId: produitId,
+            demandeId: demandeId,
+            type: type
+        };
+
+        fetch(`/Demande/DissocierProduits`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    //alert('Produits dissociés avec succès !');
+                    alert(result.message);
+
+
+                    // Recharger la page ou mettre à jour
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la dissociation des produits : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la dissociation des produits.');
+            });
+    }
+</script>
+
+<script>
+    function associerSelectionDeclasse(declassementId) {
+        const selectedAliments = [];
+        const selectedBoissons = [];
+
+        // Vérification des aliments sélectionnés
+        document.querySelectorAll('input[name="selectedAliments"]:checked').forEach(checkbox => {
+            const quantityInput = document.querySelector(`input[name="quantities_aliment[${checkbox.value}]"]`);
+            const quantity = parseInt(quantityInput.value);
+            const stock = parseInt(checkbox.dataset.stock); // Récupérer la quantité en stock
+
+            // Vérification de la quantité
+            if (quantity > stock) {
+                alert(`La quantité pour ${checkbox.nextElementSibling.innerText} ne peut pas dépasser ${stock}.`);
+                return; // Cela arrête la fonction entière
+            }
+
+            if (quantity > 0) {
+                selectedAliments.push({ id: parseInt(checkbox.value), quantite: quantity });
+            }
+        });
+
+        // Vérification des boissons sélectionnées
+        document.querySelectorAll('input[name="selectedBoissons"]:checked').forEach(checkbox => {
+            const quantityInput = document.querySelector(`input[name="quantities_boisson[${checkbox.value}]"]`);
+            const quantity = parseInt(quantityInput.value);
+            const stock = parseInt(checkbox.dataset.stock); // Récupérer la quantité en stock
+
+            // Vérification de la quantité
+            if (quantity > stock) {
+                alert(`La quantité pour ${checkbox.nextElementSibling.innerText} ne peut pas dépasser ${stock}.`);
+                return; // Cela arrête la fonction entière
+            }
+
+            if (quantity > 0) {
+                selectedBoissons.push({ id: parseInt(checkbox.value), quantite: quantity });
+            }
+        });
+
+        // Vérification si aucune sélection n'est faite
+        if (selectedAliments.length === 0 && selectedBoissons.length === 0) {
+            alert('Veuillez sélectionner au moins un aliment ou une boisson avec une quantité supérieure à 0.');
+            return;
+        }
+
+        // Préparation des données à envoyer
+        const data = {
+            AlimentIds: selectedAliments,
+            BoissonIds: selectedBoissons
+        };
+        console.log(data);
+
+        // Envoi des données au serveur
+        fetch(`/Declassement/AssocierProduits?declassementId=${declassementId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('Produits declassés avec succès !');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('staticBackdropAssocier'));
+                    modal.hide();
+                    location.reload();
+                } else {
+                    alert('Erreur lors de l\'association des produits : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de l\'association des produits.');
+            });
+    }
+</script>
+
+<script>
+    function dissocierProduitsDeclasse(produitId, declassementId, type) {
+        // Préparer les données sous forme d'objet
+        const data = {
+            produitId: produitId,
+            declassementId: declassementId,
+            type: type
+        };
+
+        fetch(`/Declassement/DissocierProduits`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert(result.message);
+                    // Recharger la page ou mettre à jour
+                    location.reload();
+                } else {
+                    alert('Erreur lors de la dissociation des produits : ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la dissociation des produits.');
+            });
+    }
+</script>
+
+<script>
+    function SelectedDemande() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const Agent = document.getElementById('Agent').value;
+        const Type = document.getElementById('Type').value;
+        const Etat = document.getElementById('Etat').value;
+        const Date = document.getElementById('Date').value;
+
+        if ((!Agent && !Type && Etat) || !Date){
+            alert("Veuillez au moins remplir le de date");
+            return false;
+        }
+
+
+        const data = {
+            Agent: Agent,
+            Type: Type,
+            Etat: Etat,
+            Date: Date
+        };
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportDemande(data);
+
+        function lancerImpressionRapportDemande(data) {
+            const printWindow = window.open(`/Report/PrintDemandes?agent=${data.Agent}&type=${data.Type}&etat=${data.Etat}&date=${data.Date}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedDemandeOne() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const DemandeId = document.getElementById('demandeId').value;
+
+
+
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportDemandeOne(DemandeId);
+
+        function lancerImpressionRapportDemandeOne(DemandeId) {
+            const printWindow = window.open(`/Report/PrintDemandesOne?demandeId=${DemandeId}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+
+<script>
+    function SelectedLivraison() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const Agent = document.getElementById('Agent').value;
+        const Etat = document.getElementById('Etat').value;
+        const Date = document.getElementById('Date').value;
+
+
+
+        const data = {
+            Agent: Agent,
+            Etat: Etat,
+            Date: Date
+        };
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportLivraison(data);
+
+        function lancerImpressionRapportLivraison(data) {
+            const printWindow = window.open(`/Report/PrintLivraisons?agent=${data.Agent}&etat=${data.Etat}&date=${data.Date}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedLivraisonOne() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const DemandeId = document.getElementById('demandeId').value;
+
+
+
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportLivraisonOne(DemandeId);
+
+        function lancerImpressionRapportLivraisonOne(DemandeId) {
+            const printWindow = window.open(`/Report/PrintLivraisonOne?demandeId=${DemandeId}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedSortie() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const Agent = document.getElementById('Agent').value;
+        const Etat = document.getElementById('Etat').value;
+        const Date = document.getElementById('Date').value;
+
+
+
+        const data = {
+            Agent: Agent,
+            Etat: Etat,
+            Date: Date
+        };
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportSortie(data);
+
+        function lancerImpressionRapportSortie(data) {
+            const printWindow = window.open(`/Report/PrintSorties?agent=${data.Agent}&etat=${data.Etat}&date=${data.Date}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedSortieOne() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const DemandeId = document.getElementById('demandeId').value;
+
+
+
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportSortieOne(DemandeId);
+
+        function lancerImpressionRapportSortieOne(DemandeId) {
+            const printWindow = window.open(`/Report/PrintSortieOne?demandeId=${DemandeId}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedDeclassement() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const Agent = document.getElementById('Agent').value;
+        const Motif = document.getElementById('Motif').value;
+        const Date = document.getElementById('Date').value;
+
+        if ((!Agent && !Motif) || !Date) {
+            alert("Veuillez au moins remplir le de date");
+            return false;
+        }
+
+        const data = {
+            Agent: Agent,
+            Motif: Motif,
+            Date: Date
+        };
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportDeclassement(data);
+
+        function lancerImpressionRapportDeclassement(data) {
+            const printWindow = window.open(`/Report/PrintDeclassements?agent=${data.Agent}&motif=${data.Motif}&date=${data.Date}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+<script>
+    function SelectedDeclassementOne() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const DeclassementId = document.getElementById('declassementId').value;
+
+
+
+        alert('Génération du rapport en cours...');
+
+        lancerImpressionRapportDeclassementOne(DeclassementId);
+
+        function lancerImpressionRapportDeclassementOne(DeclassementId) {
+            const printWindow = window.open(`/Report/PrintDeclassementsOne?declassementId=${DeclassementId}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 1000);
+        }
+
+
+    }
+</script>
+
+
+
+<script>
+    function SelectedMouvement() {
+        //const agent = document.getElementById('Agent').value;
+        //const caisse = document.getElementById('Caisse').value;
+        const Agent = document.getElementById('Agent').value;
+        const Type = document.getElementById('Type').value;
+        const Nature = document.getElementById('Nature').value;
+        const Date = document.getElementById('Date').value;
+
+        
+
+        const data = {
+            Agent: Agent,
+            Type: Type,
+            Nature: Nature,
+            Date: Date
+        };
+
+        fetch('/Mouvement/GenererDonnesRapportMouvement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erreur réseau');
+                }
+                console.log(data);
+
+                return response.json();
+            })
+            .then(result => {
+                if (result.success) {
+                    alert('Génération du rapport en cours...');
+                    lancerImpressionRapportMouvements(data);
+                } else {
+                    alert('Erreur lors de la génération du rapport : ' + (result.message || 'Erreur inconnue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur :', error);
+                alert('Une erreur s\'est produite lors de la génération du rapport : ' + error.message);
+            });
+
+        function lancerImpressionRapportMouvements(data) {
+            const printWindow = window.open(`/Report/PrintMouvementRapport?agent=${data.Agent}&type=${data.Type}&nature=${data.Nature}&date=${data.Date}`, '_blank');
+            //const printWindow = window(`/Report/PrintReglementRapport?motif=${data.recherche}&debut=${data.Datedebut}&fin=${data.Datefin}`,);
+
+            // Supprimez le location.reload() si vous voulez garder la page actuelle
+            // Si vous voulez vraiment recharger, faites-le après un délai
+            setTimeout(() => {
+
+                printWindow.print(); // À décommenter si vous voulez l'impression automatique
+                location.reload(); // À décommenter si vous voulez recharger après impression
+            }, 3000);
+        }
+
+
+    }
+    
+</script>

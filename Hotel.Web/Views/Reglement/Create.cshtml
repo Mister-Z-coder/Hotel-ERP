@@ -1,0 +1,102 @@
+﻿@model ReglementViewModel
+@{
+    ViewData["Title"] = "Reglement";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Nouveau Reglement</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reglement.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reglement.AgentId" class="form-control border" />
+                    <label asp-for="Reglement.AgentId" class="m-2"></label>
+                    <span asp-validation-for="Reglement.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reglement.CaisseId" class="form-select border" asp-items="Model.CaisseList">
+                        <option disabled selected>--Selectionnez la caisse--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reglement.CaisseId" class="form-control border" />
+                    <label asp-for="Reglement.CaisseId" class="m-2"></label>
+                    <span asp-validation-for="Reglement.CaisseId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reglement.ModeReglementId" class="form-select border" asp-items="Model.ModeReglementList">
+                        <option disabled selected>--Selectionnez le mode de reglement--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reglement.ModeReglementId" class="form-control border" />
+                    <label asp-for="Reglement.ModeReglementId" class="m-2"></label>
+                    <span asp-validation-for="Reglement.ModeReglementId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reglement.TypeReglementId" class="form-select border" asp-items="Model.TypeReglementList">
+                        <option disabled selected>--Selectionnez le type de reglement--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reglement.TypeReglementId" class="form-control border" />
+                    <label asp-for="Reglement.TypeReglementId" class="m-2"></label>
+                    <span asp-validation-for="Reglement.TypeReglementId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reglement.DeviseId" class="form-select border" asp-items="Model.DeviseList">
+                        <option disabled selected>--Selectionnez la devise--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reglement.DeviseId" class="form-control border" />
+                    <label asp-for="Reglement.DeviseId" class="m-2"></label>
+                    <span asp-validation-for="Reglement.DeviseId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reglement.DateReglement" class="form-control border" />
+                    <label asp-for="Reglement.DateReglement" class="m-2"></label>
+                    <span asp-validation-for="Reglement.DateReglement" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reglement.HeureReglement" class="form-control border" />
+                    <label asp-for="Reglement.HeureReglement" class="m-2"></label>
+                    <span asp-validation-for="Reglement.HeureReglement" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Reglement.MontantReglement" class="form-control border" />
+                    <label asp-for="Reglement.MontantReglement" class="m-2"></label>
+                    <span asp-validation-for="Reglement.MontantReglement" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Reglement.MotifReglement" class="form-control border" />
+                    <label asp-for="Reglement.MotifReglement" class="m-2"></label>
+                    <span asp-validation-for="Reglement.MotifReglement" class="text-danger"></span>
+                </div>
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Créer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Reglement" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

@@ -1,0 +1,134 @@
+﻿@model FournirViewModel
+@{
+    ViewData["Title"] = "Fournisseur";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Details Fournisseur</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Fournisseur.FournisseurId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Fournisseur.NomFournisseur" disabled class="form-control border" />
+                    <label asp-for="Fournisseur.NomFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Fournisseur.PhoneFournisseur" disabled class="form-control border" />
+                    <label asp-for="Fournisseur.PhoneFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Fournisseur.AdresseFournisseur" disabled class="form-control border" />
+                    <label asp-for="Fournisseur.AdresseFournisseur" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Fournisseur.DomaineActivite" disabled class="form-control border" />
+                    <label asp-for="Fournisseur.DomaineActivite" class="m-2"></label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Aliments associés</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.FournirList">
+        </select>*@
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center align-middle">N°</th>
+                                            <th class="text-center align-middle">Titre aliment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int j = 1;
+                                            string type = "";
+                                            type = "aliment";}
+                                        @foreach (var fournir in Model.Fournir)
+                                        {
+                                            <tr>
+                                                <td class="text-center align-middle fw-bold">@j</td>
+                                                <td class="text-center align-middle">@fournir.Aliment.TitreAliment</td>
+
+                                            </tr>
+                                            j++;
+
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Boissons associées</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.ProcurerList">
+        </select>*@
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center align-middle">N°</th>
+                                            <th class="text-center align-middle">Titre boisson</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int i = 1;
+                                            type = "boisson";}
+                                        @foreach (var procurer in Model.Procurer)
+                                        {
+                                            <tr>
+                                                <td class="text-center align-middle fw-bold">@i</td>
+                                                <td class="text-center align-middle">@procurer.Boisson.TitreBoisson</td>
+
+                                            </tr>
+                                            i++;
+
+                                        }
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row pt-2">
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="Fournisseur" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </div>
+                 
+                </div>
+</form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

@@ -1,0 +1,159 @@
+﻿
+@model ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Nouvelle Reservation</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <div class="form-floating py-3 col-12">
+                    <div class="alert alert-info" role="alert">
+                        <strong>N.B :</strong>
+                        <ul class="mb-0">
+                            <li>Si la durée est &lt; 12h → Réservation à l'heure</li>
+                            <li>Si la durée &gt;= 12h OU inclut la nuit (minuit) → Réservation à la nuit</li>
+                        </ul>
+                    </div>
+                </div>
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ResidentId" class="form-select border" asp-items="Model.ResidentList">
+                        <option disabled selected>--Selectionnez le resident--</option>
+                    </select>
+                    <label asp-for="Reservations.ResidentId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.ResidentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.AgentId" class="form-control border" />
+                    <label asp-for="Reservations.AgentId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ChambreId" class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="Reservations.ChambreId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.ChambreId" class="text-danger"></span>
+                </div>
+                @*<div class="form-floating py-1 col-12">
+            <input type="date" asp-for="Reservations.DateReservation" class="form-control border" />
+            <label asp-for="Reservations.DateReservation" class="m-2"></label>
+            <span asp-validation-for="Reservations.DateReservation" class="text-danger"></span>
+        </div>
+        <div class="form-floating py-1 col-12">
+            <input type="time" asp-for="Reservations.HeureReservation" class="form-control border" />
+            <label asp-for="Reservations.HeureReservation" class="m-2"></label>
+            <span asp-validation-for="Reservations.HeureReservation" class="text-danger"></span>
+        </div>*@
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateDebutOccupation" class="form-control border" />
+                    <label asp-for="Reservations.DateDebutOccupation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.DateDebutOccupation" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureDebutOccupation" class="form-control border" />
+                    <label asp-for="Reservations.HeureDebutOccupation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.HeureDebutOccupation" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateFinOccupation" class="form-control border" />
+                    <label asp-for="Reservations.DateFinOccupation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.DateFinOccupation" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureFinOccupation" class="form-control border" />
+                    <label asp-for="Reservations.HeureFinOccupation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.HeureFinOccupation" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.StatutReservation" id="TypeClient" class="form-select border" disabled>
+                        <option selected>CONFIRME</option>
+                        <option>ANNULE</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.StatutReservation" class="form-control border" />
+                    <label asp-for="Reservations.StatutReservation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.StatutReservation" class="text-danger"></span>
+                </div>
+
+
+
+
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Reservations.CautionReservation" class="form-control border" />
+                    <label asp-for="Reservations.CautionReservation" class="m-2"></label>
+                    <span asp-validation-for="Reservations.CautionReservation" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="ModeReglementId" class="form-select border" asp-items="Model.ModeReglementList">
+                        <option disabled selected>--Selectionnez le mode de reglement--</option>
+                    </select>
+                    <label asp-for="ModeReglementId" class="m-2"></label>
+                    <span asp-validation-for="ModeReglementId" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="DeviseId" class="form-select border" asp-items="Model.DeviseList">
+                        <option disabled selected>--Selectionnez la devise--</option>
+                    </select>
+                    <label asp-for="DeviseId" class="m-2"></label>
+                    <span asp-validation-for="DeviseId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="TypeReglementId" class="form-select border" asp-items="Model.TypeReglementList">
+                        <option disabled selected>--Selectionnez le type de reglement--</option>
+                    </select>
+                    <label asp-for="TypeReglementId" class="m-2"></label>
+                    <span asp-validation-for="TypeReglementId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <div class="input-group mb-3">
+                        <textarea type="text" readonly class="form-control border" id="motifreglement" placeholder="Motif de règlement" style="max-height:100px; min-height:100px;">Reservation(Caution)</textarea>
+                    </div>
+                </div>
+                @*<div class="form-floating py-1 col-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="IsDirect" type="checkbox" id="flexSwitchCheckDefault">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Reservation en une seule fois ?</label>
+                    </div>
+                </div>*@
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Créer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Reservation" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

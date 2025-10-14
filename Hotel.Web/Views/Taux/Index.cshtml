@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Hotel.Models.Taux>
+@{
+    ViewData["Title"] = "Taux";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Taux</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-6 offset-6 text-end">
+                <a class="btn btn-secondary" asp-controller="Taux" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i> 
+                    Nouveau taux
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Devise du taux</th>
+                    <th class="text-center align-middle">Date du taux</th>
+                    <th class="text-center align-middle">Valeur du taux</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var taux in Model)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@taux.Devise.TitreDevise @taux.Devise.SigleDevise</td>
+                        <td class="text-center align-middle">@taux.DateTaux.ToShortDateString()</td>
+                        <td class="text-center align-middle">@taux.ValeurTaux</td>
+
+
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+                                <a asp-controller="Taux" asp-action="Details" asp-route-tauxId="@taux.TauxId" class="btn btn-warning text-white">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                                <a asp-controller="Taux" asp-action="Update" asp-route-tauxId="@taux.TauxId" class="btn btn-success">
+                                    <i class="bi bi-pencil-square"></i> Modifier
+                                </a>
+                                <a asp-controller="Taux" asp-action="Delete" asp-route-tauxId="@taux.TauxId" class="btn btn-danger">
+                                    <i class="bi bi-trash-fill"></i> Supprimer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

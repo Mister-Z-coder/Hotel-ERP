@@ -1,0 +1,119 @@
+﻿@model ShiftTravailViewModel
+@{
+    ViewData["Title"] = "Shift Travail";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Shift Travail</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-2 text-end">
+                <form asp-controller="ShiftTravail" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="ShiftTravail" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Poste..." asp-for="SearchPoste" aria-label="Poste">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="ShiftTravail" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date">
+                </form>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-secondary" asp-controller="ShiftTravail" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>
+                    Nouveau Shift Travail
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Poste</th>
+                    <th>Date et Heure Debut</th>
+                    <th class="text-center align-middle">Observation Début</th>
+                    <th class="text-center align-middle">Etat</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var shift in Model.FinShiftTravails)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@shift.Agent.NomAgent @shift.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@shift.PosteTravail.TitrePosteTravail</td>
+                        <td class="text-center align-middle">@shift.DateDebutShift.Value.ToShortDateString() @shift.HeureDebutShift.Value.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@shift.ObservationDebutShift</td>
+                        <td class="text-center align-middle">
+                            @if (shift.DateFinShift is not null)
+                            {<span class="badge text-bg-danger rounded-pill">Terminé</span> }
+                            else
+                            {<span class="badge text-bg-success rounded-pill">Encours</span>}
+                        </td>
+
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+
+                                @if (shift.DateFinShift is null)
+                                {
+                                    <a asp-controller="ShiftTravail" asp-action="UpdateShiftEncours" asp-route-shiftTravailId="@shift.ShiftTravailId" class="btn btn-success">
+                                        <i class="bi bi-pencil-square"></i> Modifier
+                                    </a>
+                                    <a asp-controller="ShiftTravail" asp-action="Terminer" asp-route-shiftTravailId="@shift.ShiftTravailId" class="btn btn-danger">
+                                        <i class="bi bi-alarm-fill"></i> Terminer
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="ShiftTravail" asp-action="UpdateShiftTermine" asp-route-shiftTravailId="@shift.ShiftTravailId" class="btn btn-success">
+                                        <i class="bi bi-pencil-square"></i> Modifier
+                                    </a>
+                                    <a asp-controller="ShiftTravail" asp-action="Details" asp-route-shiftTravailId="@shift.ShiftTravailId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

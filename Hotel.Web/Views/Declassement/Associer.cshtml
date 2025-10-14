@@ -1,0 +1,282 @@
+﻿@model DeclassementViewModel
+@{
+    ViewData["Title"] = "Declassements";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Declasser Produits</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Declassements.MouvementId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Declassements.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Declassements.AgentId" class="form-control border" />
+                    <label asp-for="Declassements.AgentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Declassements.TypeMouvementId" disabled class="form-select border" asp-items="Model.TypeMouvementList">
+                        <option disabled selected>--Selectionnez le type de mouvement--</option>
+                    </select>
+                    <input type="hidden" asp-for="Declassements.TypeMouvementId" class="form-control border" />
+                    <label asp-for="Declassements.TypeMouvementId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" disabled asp-for="Declassements.DateMouvement" class="form-control border" />
+                    <label asp-for="Declassements.DateMouvement" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" disabled asp-for="Declassements.HeureMouvement" class="form-control border" />
+                    <label asp-for="Declassements.HeureMouvement" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input disabled asp-for="Declassements.NatureMouvement" class="form-control border" />
+                    <label asp-for="Declassements.NatureMouvement" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="Declassements.MotifDecaissement" disabled class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="Declassements.MotifDecaissement" class="m-2"></label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Aliments declassées</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.FournirList">
+                </select>*@
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center align-middle">N°</th>
+                                            <th class="text-center align-middle">Titre aliment</th>
+                                            <th class="text-center align-middle">Quantité declassée</th>
+                                            <th class="text-center align-middle">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int j = 1;
+                                            string type = "";
+                                            type = "aliment";}
+                                        @foreach (var mouvoir in Model.Mouvoir)
+                                        {
+                                            <tr>
+                                                <td class="text-center align-middle fw-bold">@j</td>
+                                                <td class="text-center align-middle">@mouvoir.Aliment.TitreAliment</td>
+                                                <td class="text-center align-middle">@mouvoir.QteMouv</td>
+                                                <td class="text-center align-middle">
+                                                    <div class="d-flex justify-content-center gap-2" role="group">
+                                                        <button class="btn btn-danger" onclick="dissocierProduitsDeclasse(@mouvoir.AlimentId, @Model.Declassements.MouvementId, '@type')">
+                                                            <i class="bi bi-trash-fill"></i>  Supprimer
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            j++;
+
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Boissons declassées</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.ProcurerList">
+                </select>*@
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="text-center align-middle">N°</th>
+                                            <th class="text-center align-middle">Titre boisson</th>
+                                            <th class="text-center align-middle">Quantité declassée</th>
+                                            <th class="text-center align-middle">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{ int i = 1;
+                                            type = "boisson";}
+                                        @foreach (var bouger in Model.Bouger)
+                                        {
+                                            <tr>
+                                                <td class="text-center align-middle fw-bold">@i</td>
+                                                <td class="text-center align-middle">@bouger.Boisson.TitreBoisson</td>
+                                                <td class="text-center align-middle">@bouger.QteBouger</td>
+                                                <td class="text-center align-middle">
+                                                    <div class="d-flex justify-content-center gap-2" role="group">
+                                                        @*<a asp-controller="Fournisseur" asp-action="DissocierProduits" asp-route-produitId="@procurer.BoissonId" asp-route-fournisseurId="@Model.Fournisseur.FournisseurId" class="btn btn-danger">
+                                                <i class="bi bi-trash-fill"></i> Supprimer
+                                            </a>*@
+
+                                                        <button class="btn btn-danger" onclick="dissocierProduitsDeclasse(@bouger.BoissonId, @Model.Declassements.MouvementId, '@type')">
+                                                            <i class="bi bi-trash-fill"></i>  Supprimer
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            i++;
+
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row pt-2">
+                        <div class="col-6 col-md-3">
+                            <a class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#staticBackdropAssocier">
+                                <i class="bi bi-cart-x-fill"></i> Declasser
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="Declassement" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-check-circle"></i> OK
+                            </a>
+                        </div>
+                    </div>
+                    @*Modal pour associer alimet ou boisson au fournisseur*@
+                    <div class="modal fade" id="staticBackdropAssocier" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropAssocierLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content rounded-3 shadow">
+                                <div class="modal-body p-4 text-center">
+                                    <h5 class="mb-4">Selectionnez produits à declasser</h5>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="card border-1" style="max-height: 300px; overflow-y: auto;">
+                                                <div class="card-header bg-secondary text-black">
+                                                    <h5 class="mb-0">Sélection des aliments</h5>
+                                                </div>
+                                                <div class="card-body p-0">
+    <div class="list-group list-group-flush">
+        @if (Model.Aliment != null && Model.Aliment.Any())
+        {
+            foreach (var aliment in Model.Aliment.OrderBy(b => b.TitreAliment))
+            {
+                <label class="list-group-item d-flex justify-content-between align-items-center" for="aliment_@aliment.AlimentId">
+                    <div>
+                        <input class="form-check-input me-2"
+                               type="checkbox"
+                               name="selectedAliments"
+                               value="@aliment.AlimentId"
+                               id="aliment_@aliment.AlimentId">
+                        <span>@aliment.TitreAliment</span>
+                    </div>
+                    <span class="badge bg-warning text-dark me-2">
+                        Stock : @aliment.QuantiteStock
+                    </span>
+                    <input type="number"
+                           name="quantities_aliment[@aliment.AlimentId]"
+                           class="form-control w-25"
+                           min="0"
+                           value="0"
+                           style="margin-left: 10px;" 
+                           aria-label="Quantité de @aliment.TitreAliment" />
+                </label>
+            }
+        }
+        else
+        {
+            <div class="list-group-item text-muted text-center py-3">
+                Aucun aliment disponible
+            </div>
+        }
+    </div>
+</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="card border-1" style="max-height: 300px; overflow-y: auto;">
+                                                <div class="card-header bg-secondary text-black">
+                                                    <h5 class="mb-0">Sélection des boissons</h5>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <div class="list-group list-group-flush">
+                                                        @if (Model.Boisson != null && Model.Boisson.Any())
+                                                        {
+                                                    @foreach (var boisson in Model.Boisson.OrderBy(b => b.TitreBoisson))
+                                                    {
+                                                    <label class="list-group-item d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <input class="form-check-input me-2"
+                                                                   type="checkbox"
+                                                                   name="selectedBoissons"
+                                                                   value="@boisson.BoissonId"
+                                                                   id="boisson_@boisson.BoissonId">
+                                                            <span>@boisson.TitreBoisson</span>
+                                                        </div>
+                                                        <span class="badge bg-warning text-dark me-2">
+                                                            Stock : @boisson.QuantiteStock
+                                                        </span>
+                                                        <input type="number"
+                                                               name="quantities_boisson[@boisson.BoissonId]"
+                                                               class="form-control w-25"
+                                                               min="0"
+                                                               value="0"
+                                                               style="margin-left: 10px;" />
+                                                    </label>} }
+                                                                else
+                                                                {
+                                                    <div class="list-group-item text-muted text-center py-3">
+                                                        Aucune boisson disponible
+                                                    </div>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer flex-nowrap p-0">
+
+                                        <a class="btn btn-lg btn-success fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" onclick="associerSelectionDeclasse(@Model.Declassements.MouvementId)">Declasser</a>
+                                        <a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Annuler</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div class="row pt-2">
+            <div class="col-6 col-md-3">
+                <a asp-controller="Demande" asp-action="Index" class="btn btn-secondary w-100">
+                    <i class="bi bi-x-circle"></i> Annuler
+                </a>
+            </div>
+        </div>*@
+                </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

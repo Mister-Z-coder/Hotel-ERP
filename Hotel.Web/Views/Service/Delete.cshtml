@@ -1,0 +1,58 @@
+﻿@model Service
+@{
+    ViewData["Title"] = "Service";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Aliments</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" enctype="multipart/form-data" class="row">
+            <input asp-for="ServiceId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="NomService" disabled class="form-control border" />
+                    <label asp-for="NomService" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="DescriptionService" disabled class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="DescriptionService" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="PrixService" disabled class="form-control border" />
+                    <label asp-for="PrixService" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="file" asp-for="PhotoService" disabled class="form-control border" accept=".jpg" />
+                    <label asp-for="PhotoService" class="m-2"></label>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Service" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

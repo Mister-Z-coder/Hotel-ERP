@@ -1,0 +1,604 @@
+﻿@model PointdeVenteViewModel
+@{
+    ViewData["Title"] = "Caisse";
+}
+@{
+    Layout = "_PdVLayout";
+}
+
+<div class="w-100">
+    <div class="row">
+        <div class="col-4 text-center">
+
+            <div class="buttons_m mb-2">
+                <!-- Button trigger modal -->
+                <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdropAliment">
+                    <i class="bi bi-cookie"></i> Aliments
+                </a>
+
+                @*Modal pour aliments*@
+                <!-- Modal -->
+            <div class="modal fade" id="staticBackdropAliment" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajouter aliment</h1>
+                            <input type="text" id="searchAliment" class="form-control" style="width: 700px;" placeholder="Rechercher un aliment..." />
+                            <a class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row row-cols-1 row-cols-md-5 g-3" id="alimentsContainer">
+                                    @if (!Model.Aliments.Any())
+                                    {
+                                        <div class="text-center">
+                                            <p style="color: red; font-weight: bold;">Il n'y a aucun aliment disponible.</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var aliment in Model.Aliments)
+                                        {
+                                            <div class="col aliment-item">
+                                                <div class="card h-100 d-flex flex-column" style="max-width: 200px;">
+                                                    @if (aliment.PhotoPath is not null)
+                                                    {
+                                                        <img src="@Url.Content(aliment.PhotoPath)" class="card-img-top" alt="@aliment.TitreAliment" style="height: 150px; object-fit: cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/images/client_notfound.jpg" class="card-img-top" alt="@aliment.TitreAliment" style="height: 150px; object-fit: cover;">
+                                                    }
+
+                                                    <div class="card-body d-flex flex-column p-2">
+                                                        <h6 class="card-title fs-6">@aliment.TitreAliment</h6>
+                                                        <p class="card-text fs-6"><small>Unité : @aliment.UniteAliment</small></p>
+                                                        <p class="card-text fs-6"><small class="text-muted">Prix: @aliment.PrixUnitAliment $</small></p>
+                                                        <p class="card-text fs-6"><small class="text-muted">Stock: <span id="stock-@aliment.AlimentId" data-original-stock="@aliment.QuantiteStock">@aliment.QuantiteStock</span></small></p>
+                                                        <!-- Contrôle de quantité -->
+                                                        <div class="quantity-control d-flex justify-content-between align-items-center mt-auto">
+                                                            <a class="btn btn-sm btn-outline-secondary" onclick="decrementQuantityAliment('quantity-@aliment.AlimentId')">
+                                                                <i class="bi bi-dash"></i> 
+                                                            </a>
+                                                            <span class="quantity-value" id="quantity-@aliment.AlimentId">1</span>
+                                                            <a class="btn btn-sm btn-outline-secondary"
+                                                               onclick="incrementQuantityAliment('quantity-@aliment.AlimentId', @aliment.QuantiteStock)">
+                                                                <i class="bi bi-plus"></i> 
+                                                            </a>
+                                                        </div>
+                                                        <!-- Bouton "Ajouter" -->
+                                                        <a class="btn btn-sm btn-primary w-100 mt-2"
+                                                           onclick="addProduct('@aliment.AlimentId', '@aliment.TitreAliment', '@aliment.PrixUnitAliment', document.getElementById('quantity-@aliment.AlimentId').innerText, 'aliment', @aliment.QuantiteStock)">
+                                                            <i class="bi bi-plus-circle"></i>  Ajouter
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>  Fermer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+                <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdropBoisson">
+                    <i class="bi bi-cup-straw"></i> Boissons
+                </a>
+                <!--Modal pour boisson-->
+                <div class="modal fade" id="staticBackdropBoisson" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajouter boisson</h1>
+                                <input type="text" id="searchBoisson" class="form-control" style="width: 700px;" placeholder="Rechercher une boisson..." />
+                                <a class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+                            </div>
+                            <div class="modal-body">
+                                <div class="container">
+                                    <div class="row row-cols-1 row-cols-md-5 g-3" id="boissonsContainer">
+                                        @if (!Model.Boissons.Any())
+                                        {
+                                            <div class="text-center">
+                                                <p style="color: red; font-weight: bold;">Il n'y a aucune boisson disponible.</p>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @foreach (var boisson in Model.Boissons)
+                                            {
+                                                var prix = ViewBag.BarCaisse.Contains("LOUNGE BAR") ? boisson.PrixUnitLB : boisson.PrixUnitSB;
+
+                                                <div class="col boisson-item">
+                                                    <div class="card h-100 d-flex flex-column" style="max-width: 200px;">
+                                                        @if (boisson.PhotoPath is not null)
+                                                        {
+                                                            <img src="@Url.Content(boisson.PhotoPath)" class="card-img-top" alt="@boisson.TitreBoisson" style="height: 150px; object-fit: cover;">
+                                                        }
+                                                        else
+                                                        {
+                                                            <img src="~/images/client_notfound.jpg" class="card-img-top" alt="@boisson.TitreBoisson" style="height: 150px; object-fit: cover;">
+                                                        }
+                                                        <div class="card-body d-flex flex-column p-2">
+                                                            <h6 class="card-title fs-6">@boisson.TitreBoisson</h6>
+                                                            <p class="card-text fs-6"><small>Unité : @boisson.UniteBoisson</small></p>
+                                                            <p class="card-text fs-6"><small class="text-muted">Prix: @prix $</small></p>
+                                                            <p class="card-text fs-6"><small class="text-muted">Stock : <span class="stock" data-boisson-id="@boisson.BoissonId" data-original-stock="@boisson.QuantiteStock">@boisson.QuantiteStock</span></small></p>
+                                                            <div class="quantity-control d-flex justify-content-between align-items-center mt-auto">
+                                                                <a class="btn btn-sm btn-outline-secondary" onclick="decrementQuantityBoisson(this)">
+                                                                    <i class="bi bi-dash"></i> 
+                                                                </a>
+                                                                <span class="quantity-value" data-boisson-id="@boisson.BoissonId">1</span>
+                                                                <a class="btn btn-sm btn-outline-secondary" onclick="incrementQuantityBoisson(this, @boisson.QuantiteStock)">
+                                                                    <i class="bi bi-plus"></i> 
+                                                                </a>
+                                                            </div>
+                                                            <a class="btn btn-sm btn-primary w-100 mt-2"
+                                                               onclick="addProduct('@boisson.BoissonId', '@boisson.TitreBoisson', '@prix', document.querySelector('.quantity-value[data-boisson-id=\'@boisson.BoissonId\']').textContent, 'boisson', @boisson.QuantiteStock)">
+                                                                <i class="bi bi-plus-circle"></i>  Ajouter
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>  Fermer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button trigger modal -->
+                <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdropService">
+                    <i class="bi bi-gear"></i>  Services
+                </a>
+
+                @*Modal pour services*@
+                <!-- Modal -->
+            <div class="modal fade" id="staticBackdropService" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Ajouter un service</h1>
+                            <input type="text" id="searchService" class="form-control" style="width: 700px;" placeholder="Rechercher un service..." />
+                            <a class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row row-cols-1 row-cols-md-5 g-3" id="servicesContainer">
+                                    @if (!Model.Services.Any())
+                                    {
+                                        <div class="text-center">
+                                            <p style="color: red; font-weight: bold;">Il n'y a aucun service disponible.</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var service in Model.Services)
+                                        {
+                                            <div class="col service-item">
+                                                <div class="card h-100 d-flex flex-column" style="height: 350px; max-width: 200px;">
+                                                    @if (service.PhotoPath is not null)
+                                                    {
+                                                        <img src="@Url.Content(service.PhotoPath)" class="card-img-top" alt="@service.NomService" style="height: 150px; object-fit: cover;">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/images/client_notfound.jpg" class="card-img-top" alt="@service.NomService" style="height: 150px; object-fit: cover;">
+                                                    }
+                                                    <div class="card-body d-flex flex-column p-2">
+                                                        <h6 class="card-title fs-6">@service.NomService</h6>
+                                                        <p class="card-text fs-6 flex-grow-1"><small>Description : @service.DescriptionService</small></p>
+                                                        <p class="card-text fs-6"><small class="text-muted">Prix: @service.PrixService $</small></p>
+                                                        <a class="btn btn-sm btn-primary w-100 mt-2" onclick="addProduct('@service.ServiceId', '@service.NomService', '@service.PrixService', 1, 'service', 1)">
+                                                            <i class="bi bi-plus-circle"></i>  Ajouter
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-secondary" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i>  Fermer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <h4>Produits | Services sélectionnés</h4>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center align-middle">N°</th>
+                            <th class="text-center align-middle">Produit|Service</th>
+                            <th class="text-center align-middle">Pu($)</th>
+                            <th class="text-center align-middle">Qte</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="selectedProductsTableBody">
+                        <!-- Les lignes des produits seront ajoutées ici dynamiquement -->
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total</strong></td>
+                            <td id="totalQuantity">0</td>
+                            <td id="totalPrice">0 $</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+        </div>
+
+        @*Calculatrice*@
+        <div class="col-4 text-center">
+
+            <div class="buttons">
+                <button class="operator" data-value="AC">AC</button>
+                <button class="operator" data-value="DEL">DEL</button>
+                <button class="operator" data-value="%">%</button>
+                <button class="operator" data-value="/">/</button>
+
+                <button data-value="7">7</button>
+                <button data-value="8">8</button>
+                <button data-value="9">9</button>
+                <button class="operator" data-value="*">*</button>
+
+                <button data-value="4">4</button>
+                <button data-value="5">5</button>
+                <button data-value="6">6</button>
+                <button class="operator" data-value="-">-</button>
+
+                <button data-value="1">1</button>
+                <button data-value="2">2</button>
+                <button data-value="3">3</button>
+                <button class="operator" data-value="+">+</button>
+
+                <button data-value="0">0</button>
+                <button data-value="00">00</button>
+                <button data-value=".">.</button>
+                <button class="operator" data-value="=">=</button>
+
+            </div>
+            <input type="text" placeholder="0" class="display" />
+        </div>
+        <div class="col-4 text-center">
+            <div class=".buttons_m mb-2">
+                <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdropRecu">
+                    <i class="bi bi-receipt"></i>  Commande
+                </a>
+                @*Modal pour reçu*@
+                <div class="modal fade" id="staticBackdropRecu" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropRecuLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content rounded-3 shadow">
+                            <div class="modal-body p-4 text-center">
+                                <h5 class="mb-0">Valider cette commande?</h5>
+                                <p class="mb-0">En validant la commande, vous pourrez imprimer les bons de commande.</p>
+
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selectedtable" required>
+                                        <option disabled selected>--Selectionnez la table--</option>
+
+                                        @foreach (var table in (List<Hotel.Models.TableClient>)ViewData["TableList"])
+                                        {
+                                            <option value="@table.TableClientId">@table.TitreTableClient</option>
+                                        }
+                                    </select>
+                                </div>
+                                <!-- Champ pour le serveur à changer si c'est pour le caissier -->
+
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selectedclient" required>
+                                        <option disabled selected>--Selectionnez le client--</option>
+
+                                        @foreach (var client in (List<Hotel.Models.Client>)ViewData["ClientList"])
+                                        {
+                                            <option value="@client.ClientId">@client.NomClient</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Champ pour le type de commande -->
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="typeCommande">
+                                        //<option disabled selected>--Selectionnez le type de commande--</option>
+                                        <option selected value="SUR PLACE">SUR PLACE</option>
+                                        <option value="À EMPORTER">À EMPORTER</option>
+                                        <option value="LIVRAISON">LIVRAISON</option>
+                                    </select>
+                                    <span validation-for="typeCommande" class="text-danger"></span>
+                                </div>
+                                <!-- Champ pour la date d'occupation -->
+                                <!--<div class="form-floating py-1 col-12">
+                        <label for="dateOccupation" class="m-2"></label>
+                        <input type="date" class="form-control border" id="dateOccupation">
+                    </div>-->
+                                <!-- Champ pour l'heure d'occupation -->
+                                <!--<div class="form-floating py-1 col-12">
+                        <label for="heureOccupation" class="m-2"></label>
+                        <input type="time" class="form-control border" id="heureOccupation">
+                    </div>-->
+                            </div>
+                            <div class="modal-footer flex-nowrap p-0">
+                                <a id="validateButton" class="btn btn-lg btn-success fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" onclick="sendSelectedProducts()">Valider la commande</a>
+                                <a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Annuler</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!--Modal pour l'historique'-->
+                <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#staticBackdropHistorique">
+                    <i class="bi bi-clock-history"></i> Historique
+                </a>
+                
+                <div class="modal fade" id="staticBackdropHistorique" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropHistoriqueLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl" role="document">
+                        <div class="modal-content rounded-3 shadow">
+                            <div class="modal-body p-4 text-center">
+                                <h5 class="mb-0">Historique des factures reglés par : @User.Identity.Name.ToUpper()</h5>
+                                <p class="mb-0">Voici l'historique des factures reglés par vous.</p>
+                                <div style="display: flex; margin-bottom: 10px;">
+                                    <input type="text" id="searchCommandeId" placeholder="N°Commande..." class="form-control form-control-sm ms-2" style="width: 200px;" oninput="filterHistorique()" />
+                                    <input type="text" id="searchClient" placeholder="Client..." class="form-control form-control-sm ms-2" style="width: 200px;" oninput="filterHistorique()" />
+
+                                    <input type="date" class="form-control form-control-sm ms-2" id="Datedebut">
+                                    <input type="date" class="form-control form-control-sm ms-2" id="Datefin">
+                                    
+                                    <div class="col-3">
+                                        <button type="button" class="btn btn-secondary" onclick="SelectedVentesAgent('@User.Identity.Name.ToUpper()')">
+                                            <i class="bi bi-printer"></i> 
+                                            Rapport
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Tableau pour afficher les détails de l'historique des factures reglés' -->
+                                <div style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table table-bordered table-hover" id="historiqueTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center align-middle">N°</th>
+                                                <th class="text-center align-middle">N° Facture</th>
+                                                <th class="text-center align-middle">N° Commande</th>
+                                                <th class="text-center align-middle">Date</th>
+                                                <th class="text-center align-middle">Client</th>
+                                                <th class="text-center align-middle">Agent</th>
+                                                <th class="text-center align-middle">Devise</th>
+                                                <th class="text-center align-middle">Montant</th>
+                                                <th class="text-center align-middle">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detailsHistoriqueBody">
+                                            <!-- Les lignes seront ajoutées dynamiquement ici -->
+                                           
+                                        </tbody>
+                                        <!-- Footer pour afficher le total -->
+                                        <tfoot id="totalReglement">
+                                            @*<tr>
+                                                <td colspan="7" class="text-end"><strong>Total journalier encaissé</strong></td>
+                                                <td class="fw-bold" id="totalReglement">0</td>
+                                            </tr>*@
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <!-- Bouton pour ouvrir l'historique des reglements -->
+                                <div class="modal-footer flex-nowrap p-0">
+                                    <a class="btn btn-lg btn-secondary fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Fermer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*<a class="btn btn-secondary"><i class="bi bi-receipt-cutoff"></i> Reglement</a>*@
+
+
+                <div class="modal fade" id="staticBackdropReglementdetails" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropRecuLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content rounded-3 shadow">
+                            <div class="modal-body p-4 text-center">
+                                <h5 class="mb-0">Détails de la commande N° <input type="text" id="numcommande" class="border-0" readonly></h5>
+                                <p class="mb-0">Voici les détails de la commande sélectionnée.</p>
+                                <!-- Tableau pour afficher les détails de la commande -->
+                                <div style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table table-bordered table-hover">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th class="text-center align-middle">N°</th>
+                                                <th class="text-center align-middle">Date</th>
+                                                <th class="text-center align-middle">Table</th>
+                                                <th class="text-center align-middle">Client</th>
+                                                <th class="text-center align-middle">Agent</th>
+                                                <th class="text-center align-middle">Produit/Service</th>
+                                                <th class="text-center align-middle">Quantité</th>
+                                                <th class="text-center align-middle">P.U</th>
+                                                <th class="text-center align-middle">P.T</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="detailsCommandeBody">
+                                            <!-- Les lignes seront ajoutées dynamiquement ici -->
+                                        </tbody>
+                                        <!-- Footer pour afficher le total -->
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="8" class="text-end"><strong>Total Facture</strong></td>
+                                                <td class="fw-bold" id="totalCommande">0 $</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                                <!-- Bouton pour ouvrir le deuxième modal (règlement) -->
+                                <div class="modal-footer flex-nowrap p-0">
+                                    <a class="btn btn-lg btn-primary fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-toggle="modal" id="payerCommande" data-bs-target="#staticBackdropReglement">Payer la commande</a>
+                                    <a class="btn btn-lg btn-secondary fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Fermer</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal règlement) -->
+
+                <div class="modal fade" id="staticBackdropReglement" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropRecuLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content rounded-3 shadow">
+                            <div class="modal-body p-4 text-center">
+                                <h5 class="mb-0">Payer commande N° <input type="text" id="numCommandeReglement" class="border-0" readonly></h5>
+
+                                <p class="mb-0">En validant le règlement, vous pourrez imprimer la facture.</p>
+                                <!-- Champ pour le mode de règlement -->
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selectedmreglement" required>
+                                        <option disabled selected>--Sélectionnez le mode de règlement--</option>
+                                        @foreach (var modereglement in (List<Hotel.Models.ModeReglement>)ViewData["ModeReglementList"])
+                                        {
+                                            <option value="@modereglement.ModeReglementId">@modereglement.TitreModeReglement</option>
+                                        }
+                                    </select>
+                                </div>
+                                <!--Champ pour la devise-->
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selecteddevise" required>
+                                        <option disabled selected>--Sélectionnez la devise--</option>
+                                        @foreach (var devise in (List<Hotel.Models.Devise>)ViewData["DeviseList"])
+                                        {
+                                            <option value="@devise.DeviseId">@devise.TitreDevise (@devise.SigleDevise)</option>
+                                        }
+                                    </select>
+                                </div>
+                                <!--Champ pour le type de règlement-->
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selectedtreglement" required>
+                                        <option disabled selected>--Sélectionnez le type de règlement--</option>
+                                        @foreach (var typereglement in (List<Hotel.Models.TypeReglement>)ViewData["TypeReglementList"])
+                                        {
+                                            <option value="@typereglement.TypeReglementId">@typereglement.TitreTypeReglement</option>
+                                        }
+                                    </select>
+                                </div>
+                                <!--Champ pour le poste de travail-->
+                                <div class="form-floating py-1 col-12">
+                                    <select class="form-select border" id="selectedcaisse" required>
+
+                                        @foreach (var caisse in (List<Hotel.Models.CaisseDetail>)ViewData["Caisse"])
+                                        {
+                                            <option selected value="@caisse.CaisseId">@caisse.TitreCaisse</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!--Champ pour le motif règlement-->
+
+                                <div class="form-floating py-1 col-12">
+                                    <div class="input-group mb-3">
+                                        <textarea type="text" readonly class="form-control border" id="motifreglement" placeholder="Motif de règlement" style="max-height:100px; min-height:100px;">Vente</textarea>
+                                    </div>
+                                </div>
+                                <!-- ... -->
+                                <h4 class="text-white bg-dark p-2 rounded text-center fw-bold">
+                                    <input type="text" class="border-0 text-capitalize bg-transparent text-white text-center fw-bold" id="totalCommandeReglement" readonly>
+                                </h4>
+                            </div>
+                            <div class="modal-footer flex-nowrap p-0">
+                                <a class="btn btn-lg btn-success fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" onclick="sendSelectedCommande()">Confirmer le règlement</a>
+                                <a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Annuler</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <h4>Commandes non payées (@Model.CommandeJours.Count)</h4>
+
+            <div style="display: flex; margin-bottom: 10px;">
+                <input type="text" id="searchCommandeId" placeholder="N°Commande..." class="form-control form-control-sm ms-2" style="width: 120px;" oninput="filterTable()" />
+                <input type="text" id="searchTable" placeholder="Table..." class="form-control form-control-sm ms-2" style="width: 120px;" oninput="filterTable()" />
+                <input type="text" id="searchClient" placeholder="Client..." class="form-control form-control-sm ms-2" style="width: 120px;" oninput="filterTable()" />
+            </div>
+
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-bordered table-hover" id="commandesTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center align-middle">N°</th>
+                            <th class="text-center align-middle">N°Commande</th>
+                            <th class="text-center align-middle">Date</th>
+                            <th class="text-center align-middle">Client</th>
+                            <th class="text-center align-middle">Table</th>
+                            <th class="text-center align-middle">Type</th>
+                            <th class="text-center align-middle">Agent</th>
+                            <th class="text-center align-middle">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int i = 1; }
+                        @foreach (var commandej in Model.CommandeJours)
+                        {
+            <tr>
+                <td class="text-center align-middle fw-bold">@i</td>
+                <td class="text-center align-middle">@commandej.CommandeId</td>
+                <td class="text-center align-middle">@commandej.DtHrCommande</td>
+                <td class="text-center align-middle">@commandej.ClientNom</td>
+                <td class="text-center align-middle">@commandej.TableTitre</td>
+                <td class="text-center align-middle">@commandej.TypeCommande</td>
+                <td class="text-center align-middle">@commandej.AgentNom</td>
+                <td class="text-center align-middle">
+                    <a class="btn btn-sm btn-success"
+                       data-bs-toggle="modal"
+                       data-bs-target="#staticBackdropReglementdetails"
+                       data-commande-id="@commandej.CommandeId">
+                        <i class="bi bi-receipt-cutoff"></i> 
+                    </a>
+                </td>
+            </tr>                i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+<script>
+    function afficherDateHeure() {
+        const maintenant = new Date();
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // Format 24 heures
+        };
+        const dateHeure = maintenant.toLocaleString('fr-FR', options);
+        document.getElementById('dateHeure').textContent = dateHeure;
+    }
+
+    // Mettre à jour la date et l'heure chaque seconde
+    setInterval(afficherDateHeure, 1000);
+    afficherDateHeure(); // Appel initial
+</script>

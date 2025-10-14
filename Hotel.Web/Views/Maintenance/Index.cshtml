@@ -1,0 +1,119 @@
+﻿@model MaintenanceChambreViewModel
+@{
+    ViewData["Title"] = "Maintenance Chambre";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Maintenance Chambre</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-2 text-end">
+                <form asp-controller="Maintenance" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Maintenance" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Chambre..." asp-for="SearchChambre" aria-label="Chambre">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Maintenance" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date">
+                </form>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-secondary" asp-controller="Maintenance" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>
+                    Nouvelle Maintenance Chambre
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Chambre</th>
+                    <th>Date et Heure Debut</th>
+                    <th class="text-center align-middle">Observation Début</th>
+                    <th class="text-center align-middle">Etat</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var maintenance in Model.FinMaintenanceChambres)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@maintenance.Agent.NomAgent @maintenance.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@maintenance.Chambre.NumeroChambre</td>
+                        <td class="text-center align-middle">@maintenance.DateDebutMaintenance.Value.ToShortDateString() @maintenance.HeureDebutMaintenance.Value.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@maintenance.ObservationDebutMaintenance</td>
+                        <td class="text-center align-middle">
+                            @if (maintenance.DateFinMaintenance is not null)
+                            {<span class="badge text-bg-danger rounded-pill">Nettoyé</span> }
+                            else
+                            {<span class="badge text-bg-success rounded-pill">Nettoyage encours</span>}
+                        </td>
+
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+
+                                @if (maintenance.DateFinMaintenance is null)
+                                {
+                                    <a asp-controller="Maintenance" asp-action="UpdateMaintenanceEncours" asp-route-maintenancechambreId="@maintenance.MaintenanceChambreId" class="btn btn-success">
+                                        <i class="bi bi-pencil-square"></i> Modifier
+                                    </a>
+                                    <a asp-controller="Maintenance" asp-action="Terminer" asp-route-maintenancechambreId="@maintenance.MaintenanceChambreId" class="btn btn-danger">
+                                        <i class="bi bi-magic m-1"></i> Terminer
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Maintenance" asp-action="UpdateMaintenanceTermine" asp-route-maintenancechambreId="@maintenance.MaintenanceChambreId" class="btn btn-success">
+                                        <i class="bi bi-pencil-square"></i> Modifier
+                                    </a>
+                                    <a asp-controller="Maintenance" asp-action="Details" asp-route-maintenancechambreId="@maintenance.MaintenanceChambreId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i> Details
+                                    </a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

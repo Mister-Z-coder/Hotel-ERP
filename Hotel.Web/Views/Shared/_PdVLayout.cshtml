@@ -1,0 +1,258 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Binga Mopepe House</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/toastr.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/select2.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        @* html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+        }*@
+        .scrollable-table-container {
+            max-height: 400px; /* Hauteur maximale avant défilement */
+            overflow-y: auto; /* Barre de défilement verticale */
+            border: 1px solid #ddd; /* Bordure pour le conteneur */
+            border-radius: 5px; /* Coins arrondis */
+        }
+
+            /* Style de la barre de défilement */
+            .scrollable-table-container::-webkit-scrollbar {
+                width: 8px; /* Largeur de la barre de défilement */
+            }
+
+            .scrollable-table-container::-webkit-scrollbar-thumb {
+                background-color: #888; /* Couleur de la barre de défilement */
+                border-radius: 4px; /* Coins arrondis */
+            }
+
+                .scrollable-table-container::-webkit-scrollbar-thumb:hover {
+                    background-color: #555; /* Couleur au survol */
+                }
+
+        /* Style du tableau */
+        .table {
+            margin-bottom: 0; /* Supprime la marge en bas du tableau */
+        }
+
+            .table thead th {
+                position: sticky; /* En-tête fixe lors du défilement */
+                top: 0;
+                background-color: #f8f9fa; /* Couleur de fond de l'en-tête */
+                z-index: 1; /* Assure que l'en-tête reste au-dessus du contenu */
+            }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: scale(1.05); /* Effet de zoom au survol */
+            }
+
+        .card-img-top {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 0.5rem; /* Réduire le padding */
+        }
+
+        .card-title {
+            font-size: 0.9rem; /* Taille de police plus petite */
+            margin-bottom: 0.25rem; /* Réduire la marge */
+        }
+
+        .card-text {
+            font-size: 0.8rem; /* Taille de police plus petite */
+            margin-bottom: 0.25rem; /* Réduire la marge */
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 5px; /* Réduire l'espace entre les boutons */
+            margin: 0.25rem 0; /* Réduire la marge */
+        }
+
+            .quantity-control .btn {
+                padding: 0.25rem 0.5rem; /* Boutons plus petits */
+            }
+
+        .quantity-value {
+            font-size: 0.9rem; /* Taille de police plus petite */
+            font-weight: bold;
+        }
+
+
+        .calccontainer {
+            position: relative;
+            max-width: 300px;
+            width: 100%;
+            border-radius: 12px;
+            padding: 10px 20px 20px;
+            background: #fff;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.05);
+        }
+
+            .display {
+            height: 80px;
+            width: 100%;
+            outline: none;
+            border: none;
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 25px;
+            color: #000e1a;
+            pointer-events: none;
+        }
+        .buttons_m {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .buttons_r {
+            display: grid;
+            grid-gap: 20px;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .buttons {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+            .buttons button {
+                padding: 10px;
+                border-radius: 6px;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                background-color: #eee;
+            }
+
+                .buttons button:active {
+                    transform: scale(0.99);
+                }
+
+        .operator {
+            color: #2f9fff;
+        }
+
+    </style>
+    
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm bg-dark-subtle border-bottom box-shadow mb-3">
+            <div class="container justify-content-center">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 justify-content-center">
+                        <li class="nav-item m-2 text-center">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-piggy-bank-fill m-2"></i>  Caisse :
+                                @if (ViewBag.TitreCaisse != "")
+                                {
+                                    <span>@ViewBag.TitreCaisse | @ViewBag.BarCaisse</span>
+                                }
+                                else
+                                {
+                                    <span class="badge text-bg-danger rounded-pill">Aucune caisse connectée | aucun bar</span>
+                                }
+                                - <i class="bi bi-alarm"></i>  <span id="dateHeure"></span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="dropdown text-end">
+                            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                @try
+                                {
+                                    string photoagent = User.Claims.FirstOrDefault(c => c.Type == "PhotoUser")?.Value;
+                                    if (photoagent is not null)
+                                    {
+                                        <img src="@Url.Content("~/images/agents/"+photoagent)" alt="Photo" width="32" height="32" class="rounded-circle m-2" />
+                                        <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/th.jpeg" width="32" height="32" class="rounded-circle m-2" alt="Photo" />
+                                        <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                    }
+                                }
+                                catch
+                                {
+                                    <img src="~/images/th.jpeg" width="32" height="32" class="rounded-circle m-2" alt="Photo" />
+                                    <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu text-small">
+                                <form asp-controller="User" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Se déconnecter</button>
+                                </form>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dropdown text-end">
+                            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/images/th.jpeg" alt="Photo" width="32" height="32" class="rounded-circle" />
+                            </a>
+                            <ul class="dropdown-menu text-small">
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="Login">Se connecter</a></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </nav>
+
+</header>
+<div>
+    <main role="main" class="pb-3">
+        <partial name="_Notification" />
+        @RenderBody()
+    </main>
+</div>
+
+<footer class="border-top footer text-muted">
+    <div class="container text-center">
+        &copy; 2025 - Binga Mopepe house - By SkydomTechnologies - <a asp-area="" asp-controller="Home" asp-action="Privacy">Copyright</a>
+    </div>
+</footer>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/toastr.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/toastr.js"></script>
+<script src="~/lib/bootstrap/dist/js/select2.js"></script>
+<script src="~/lib/bootstrap/dist/js/select2.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/calc_script.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

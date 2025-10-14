@@ -1,0 +1,59 @@
+﻿@model TauxViewModel
+@{
+    ViewData["Title"] = "Taux";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Mettre à jour Taux</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Taux.TauxId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Taux.DeviseId" class="form-select border" asp-items="Model.DeviseList">
+                        <option disabled selected>--Selectionnez devise--</option>
+                    </select>
+                    <label asp-for="Taux.DeviseId" class="m-2"></label>
+                    <span asp-validation-for="Taux.DeviseId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Taux.DateTaux" disabled class="form-control border" />
+                    <label asp-for="Taux.DateTaux" class="m-2"></label>
+                    <span asp-validation-for="Taux.DateTaux" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Taux.ValeurTaux" class="form-control border" />
+                    <label asp-for="Taux.ValeurTaux" class="m-2"></label>
+                    <span asp-validation-for="Taux.ValeurTaux" class="text-danger"></span>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-pencil-square"></i> Modifier
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Taux" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

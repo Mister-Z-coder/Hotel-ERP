@@ -1,0 +1,70 @@
+﻿@model DeclassementViewModel
+@{
+    ViewData["Title"] = "Declassements";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Declassement</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <input type="hidden" asp-for="Declassements.MouvementId" />
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Declassements.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Declassements.AgentId" class="form-control border" />
+                    <label asp-for="Declassements.AgentId" class="m-2"></label>
+
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Declassements.TypeMouvementId" disabled class="form-select border" asp-items="Model.TypeMouvementList">
+                        <option disabled selected>--Selectionnez le type de mouvement--</option>
+                    </select>
+                    <input type="hidden" asp-for="Declassements.TypeMouvementId" class="form-control border" />
+                    <label asp-for="Declassements.TypeMouvementId" class="m-2"></label>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Declassements.NatureMouvement" disabled class="form-select border">
+                        <option selected>DECLASSEMENT</option>
+                    </select>
+                    <input type="hidden" asp-for="Declassements.NatureMouvement" />
+                    <label asp-for="Declassements.NatureMouvement" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="Declassements.MotifDecaissement" disabled class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="Declassements.MotifDecaissement" class="m-2"></label>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Declassement" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

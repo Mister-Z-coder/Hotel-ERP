@@ -1,0 +1,94 @@
+﻿@model DemandeViewModel
+@{
+    ViewData["Title"] = "Demande";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Demande</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Demandes.DemandeId" hidden />
+            <div class="p-3">
+                <div class="form-floating py-3 col-12">
+                    <div class="alert alert-info" role="alert">
+                        <strong>Différents états d'une demande :</strong>
+                        <span class="badge text-bg-warning rounded-pill">Brouillon</span>,
+                        <span class="badge text-bg-info rounded-pill">Validée</span>,
+                        <span class="badge text-bg-success rounded-pill">Livré</span>,
+                        <span class="badge text-bg-success rounded-pill">Sortie</span>.
+                        <ul class="mb-0">
+                            <li>
+                                <p>
+                                    <span class="badge text-bg-warning rounded-pill">Brouillon</span> : C'est l'état initial d'une demande quelle qu'elle soit (approvisionnement ou ajout).
+                                    Elle indique que la demande ne contient aucun produit (boisson, aliment) conformement au type de la demande.
+                                </p>
+                            <li>
+                                <p><span class="badge text-bg-info rounded-pill">Validée</span> : C'est l'état second d'une demnade au dès l'instant où elle porte des produits.</p>
+                            </li>
+                            <li>
+                                <p><span class="badge text-bg-success rounded-pill">Livré</span> : C'est l'état final d'une demande d'approvisionnement, cela signifie que les produits qui ont été portés par la dite demande d'approvisionnement ont tous été livrés.</p>
+                            </li>
+                            <li>
+                                <p><span class="badge text-bg-success rounded-pill">Sortie</span>: C'est l'état final d'une demande d'ajout, cela signifie que les produits qui ont été portés par la dite demande d'ajout ont tous été ajoutés au stock.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Demandes.AgentId" class="form-control border" />
+                    <label asp-for="Demandes.AgentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Demandes.DateDemande" disabled class="form-control border" />
+                    <label asp-for="Demandes.DateDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.TypeDemande" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez le type de demande--</option>
+                        <option>APPROVISIONNEMENT</option>
+                        <option>AJOUT</option>
+                    </select>
+                    <input asp-for="Demandes.TypeDemande" hidden />
+                    <label asp-for="Demandes.TypeDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input disabled asp-for="Demandes.EtatDemande" class="form-control border" />
+                    <input asp-for="Demandes.EtatDemande" hidden />
+                    <label asp-for="Demandes.EtatDemande" class="m-2"></label>
+                </div>
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="SortieAjout" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

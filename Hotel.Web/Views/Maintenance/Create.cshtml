@@ -1,0 +1,77 @@
+﻿@model MaintenanceChambreViewModel
+@{
+    ViewData["Title"] = "Maintenance Chambre";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Nouvelle @ViewData["Title"]</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="MaintenanceChambre.AgentId" class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <label asp-for="MaintenanceChambre.AgentId" class="m-2"></label>
+                    <span asp-validation-for="MaintenanceChambre.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="MaintenanceChambre.ChambreId" class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="MaintenanceChambre.ChambreId" class="m-2"></label>
+                    <span asp-validation-for="MaintenanceChambre.ChambreId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="MaintenanceChambre.DateDebutMaintenance" class="form-control border" />
+                    <label asp-for="MaintenanceChambre.DateDebutMaintenance" class="m-2"></label>
+                    <span asp-validation-for="MaintenanceChambre.DateDebutMaintenance" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="MaintenanceChambre.HeureDebutMaintenance" class="form-control border" />
+                    <label asp-for="MaintenanceChambre.HeureDebutMaintenance" class="m-2"></label>
+                    <span asp-validation-for="MaintenanceChambre.HeureDebutMaintenance" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="MaintenanceChambre.ObservationDebutMaintenance" class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="MaintenanceChambre.ObservationDebutMaintenance" class="m-2"></label>
+                    <span asp-validation-for="MaintenanceChambre.ObservationDebutMaintenance" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" asp-for="IsMultimaintenance" type="checkbox" id="flexSwitchCheckDefault">
+                        <label class="form-check-label" for="flexSwitchCheckDefault">Multlti maintenance</label>
+                    </div>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Créer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Maintenance" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+
+

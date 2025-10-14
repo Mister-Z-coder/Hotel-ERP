@@ -1,0 +1,47 @@
+﻿@model TypeReglement
+@{
+    ViewData["Title"] = "Type Reglement";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Mettre à jour Type Reglement</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="TypeReglementId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="TitreTypeReglement" class="form-control border" />
+                    <label asp-for="TitreTypeReglement" class="m-2"></label>
+                    <span asp-validation-for="TitreTypeReglement" class="text-danger"></span>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-pencil-square"></i> Modifier
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="TypeReglement" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

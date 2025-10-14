@@ -1,0 +1,108 @@
+﻿@model BoissonViewModel
+@{
+    ViewData["Title"] = "Boisson";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Nouvelle Boisson</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" enctype="multipart/form-data" class="row">
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Boisson.BrasserieId" class="form-select border" asp-items="Model.BrasserieList">
+                        <option disabled selected>--Selectionnez la brasserie--</option>
+                    </select>
+                    <input type="hidden" asp-for="Boisson.BrasserieId" class="form-control border" />
+                    <label asp-for="Boisson.BrasserieId" class="m-2"></label>
+                    <span asp-validation-for="Boisson.BrasserieId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Boisson.CategorieBoissonId" class="form-select border" asp-items="Model.CategorieBoissonList">
+                        <option disabled selected>--Selectionnez la catégorie boisson--</option>
+                    </select>
+                    <input type="hidden" asp-for="Boisson.CategorieBoissonId" class="form-control border" />
+                    <label asp-for="Boisson.CategorieBoissonId" class="m-2"></label>
+                    <span asp-validation-for="Boisson.CategorieBoissonId" class="text-danger"></span>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="Boisson.TitreBoisson" class="form-control border" />
+                    <label asp-for="Boisson.TitreBoisson" class="m-2"></label>
+                    <span asp-validation-for="Boisson.TitreBoisson" class="text-danger"></span>
+                </div>
+                
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Boisson.UniteBoisson" class="form-select border">
+                        <option disabled selected>--Selectionnez l'unité de la boisson--</option>
+                        <option>SACHET</option>
+                        <option>CARTON</option>
+                        <option>BOITE</option>
+                        <option>PALETTE</option>
+                        <option>BOUTEILLE</option>
+                        <option>CANETTE</option>
+                        <option>PAQUET</option>
+                        <option>BARQUETTE</option>
+                        <option>TONNEAU</option>
+                        <option>SAC</option>
+                        <option>CAISSE</option>
+                        <option>FUT</option>
+                        <option>BARRE</option>
+                        <option>PLATEAU</option>
+                        <option>VRAC</option>
+                    </select>
+                    <label asp-for="Boisson.UniteBoisson" class="m-2"></label>
+                    <span asp-validation-for="Boisson.UniteBoisson" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Boisson.PrixUnitSB" class="form-control border" />
+                    <label asp-for="Boisson.PrixUnitSB" class="m-2"></label>
+                    <span asp-validation-for="Boisson.PrixUnitSB" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Boisson.PrixUnitLB" class="form-control border" />
+                    <label asp-for="Boisson.PrixUnitLB" class="m-2"></label>
+                    <span asp-validation-for="Boisson.PrixUnitLB" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Boisson.QuantiteStock" class="form-control border" />
+                    <label asp-for="Boisson.QuantiteStock" class="m-2"></label>
+                    <span asp-validation-for="Boisson.QuantiteStock" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="file" asp-for="Boisson.PhotoBoisson" class="form-control border" accept=".jpg" />
+                    <label asp-for="Boisson.PhotoBoisson" class="m-2"></label>
+                    <span asp-validation-for="Boisson.PhotoBoisson" class="text-danger"></span>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Créer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Boisson" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

@@ -1,0 +1,154 @@
+﻿@model ReglementViewModel
+@{
+    ViewData["Title"] = "Reglement";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Reglements</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-2 text-end">
+                <form asp-controller="Reglement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent" id="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Reglement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Caisse..." asp-for="SearchCaisse" aria-label="Caisse" id="Caisse">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Reglement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Motif..." asp-for="SearchMotif" aria-label="Motif" id="Motif">
+                </form>
+            </div>
+            @*<div class="col-2 text-end">
+                <form asp-controller="Reglement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDatedebut" aria-label="Date" id="Datedebut">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Reglement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDatefin" aria-label="Date" id="Datefin">
+                </form>
+            </div>*@
+
+            <div class="col-2">
+                <input type="date" class="form-control" id="Datedebut">
+            </div>
+            <div class="col-2">
+                <input type="date" class="form-control" id="Datefin">
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-secondary" onclick="SelectedReglement()">
+                    <i class="bi bi-printer"></i> 
+                    Rapport
+                </button>
+            </div>
+
+        </div>
+
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center align-middle">N°</th>
+                        <th class="text-center align-middle">Agent</th>
+                        <th class="text-center align-middle">Caisse</th>
+                        <th class="text-center align-middle">Mode - Type reglement</th>
+                        <th class="text-center align-middle">Date et Heure reglement</th>
+                        <th class="text-center align-middle">Devise</th>
+                        <th class="text-center align-middle">Montant reglement</th>
+                        <th class="text-center align-middle">Motif reglement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var reglement in Model.Reglements)
+                    {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@reglement.Agent.NomAgent @reglement.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@reglement.Caisse.TitrePosteTravail</td>
+                        <td class="text-center align-middle">@reglement.ModeReglement.TitreModeReglement - @reglement.TypeReglement.TitreTypeReglement</td>
+                        <td class="text-center align-middle">@reglement.DateReglement.ToShortDateString() - @reglement.HeureReglement.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@reglement.Devise.SigleDevise</td>
+                        <td class="text-center align-middle">@reglement.MontantReglement</td>
+                        <td class="text-center align-middle">@reglement.MotifReglement</td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+                                <a asp-controller="Reglement" asp-action="Update" asp-route-reglementId="@reglement.ReglementId" class="btn btn-success btn-sm">
+                                    <i class="bi bi-pencil-square"></i>Modifier
+                                </a>
+                                <a asp-controller="Reglement" asp-action="Delete" asp-route-reglementId="@reglement.ReglementId" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash-fill"></i>Supprimer
+                                </a>
+                            </div>
+                        </td>
+
+                    </tr>
+                        ViewBag.NumAff++;
+                    }
+                </tbody>
+                @{ // Calculer les totaux par devise
+                    var totalGeneral = Model.Reglements.Sum(r => r.MontantReglement);
+                    var totalsByDevise = Model.Reglements
+                        .GroupBy(r => r.Devise)
+                        .Select(g => new
+                        {
+                            Devise = g.Key,
+                            Total = g.Sum(r => r.MontantReglement)
+                        })
+                        .ToList();
+                }
+                <tfoot>
+
+                    @foreach (var total in totalsByDevise)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-end"><strong>Total en (@total.Devise.SigleDevise)</strong></td>
+                            <td colspan="1" class="text-center align-middle fw-bold">@total.Total.ToString("F2")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="6" class="text-end"><strong>Total général</strong></td>
+                        <td colspan="1" class="text-center align-middle fw-bold">@totalGeneral.ToString("F2")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    @*<div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>*@
+
+</div>
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}

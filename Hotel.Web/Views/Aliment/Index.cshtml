@@ -1,0 +1,113 @@
+﻿@model AlimentViewModel
+@{
+    ViewData["Title"] = "Aliment";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Aliments</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-4 text-end">
+                <form asp-controller="Aliment" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Rechercher..." asp-for="SearchString" aria-label="Rechercher">
+                </form>
+            </div>
+            <div class="col-8 text-end">
+                <a class="btn btn-secondary" asp-controller="Aliment" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i> 
+                    Nouvel Aliment
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Titre</th>
+                    <th class="text-center align-middle">Unité</th>
+                    <th class="text-center align-middle">P.Unit</th>
+                    <th class="text-center align-middle">Quantité</th>
+                    <th class="text-center align-middle">Photo</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var aliment in Model.Aliments)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@aliment.TitreAliment</td>
+                        <td class="text-center align-middle">@aliment.UniteAliment</td>
+                        <td class="text-center align-middle">@aliment.PrixUnitAliment.00 $</td>
+                        <td class="text-center align-middle">@aliment.QuantiteStock</td>
+                        <td class="text-center align-middle">
+                            @if (!string.IsNullOrEmpty(aliment.PhotoPath))
+                            {
+                                <div style="max-width: 100px;">
+                                    <img src="@Url.Content(aliment.PhotoPath)" alt="Photo de l'aliment'" class="img-fluid" style="width: 100%; height: 100px; object-fit: cover;" onclick="openModal(this.src)" />
+                                </div>
+                            }
+                            else
+                            {
+                                <p>Pas de photo</p>
+                            }
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+                                <a asp-controller="Aliment" asp-action="Details" asp-route-alimentId="@aliment.AlimentId" class="btn btn-warning text-white">
+                                    <i class="bi bi-info-circle"></i> Details
+                                </a>
+                                <a asp-controller="Aliment" asp-action="Update" asp-route-alimentId="@aliment.AlimentId" class="btn btn-success">
+                                    <i class="bi bi-pencil-square"></i> Modifier
+                                </a>
+                                <a asp-controller="Aliment" asp-action="Delete" asp-route-alimentId="@aliment.AlimentId" class="btn btn-danger">
+                                    <i class="bi bi-trash-fill"></i> Supprimer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- Modal pour visionnage de la photo -->
+    <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center;">
+        <span onclick="closeModal()" style="color: white; position: absolute; top: 20px; right: 30px; cursor: pointer;">&times;</span>
+        <img id="modalImage" style="max-width: 90%; max-height: 90%;" />
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

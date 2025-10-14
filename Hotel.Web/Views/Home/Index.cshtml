@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Acceuil";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenue</h1>
+</div>
+@if (User.Identity.IsAuthenticated && (User.IsInRole("ADMIN") || User.IsInRole("ADMINISTRATEUR") || User.IsInRole("SUPERVISEUR") || User.IsInRole("GESTIONNAIRE")))
+{
+    <div class="ratio ratio-16x9">
+        <iframe src="@ViewBag.Config" border: none;" title="Dashboard" allowfullscreen></iframe>
+    </div>
+}

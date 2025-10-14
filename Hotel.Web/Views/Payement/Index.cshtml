@@ -1,0 +1,109 @@
+﻿@model ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Reservations non payées (@Model.Reservation.Count())</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-3 text-end">
+                <form asp-controller="Payement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent">
+                </form>
+            </div>
+            <div class="col-3 text-end">
+                <form asp-controller="Payement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Chambre..." asp-for="SearchChambre" aria-label="Chambre">
+                </form>
+            </div>
+            <div class="col-3 text-end">
+                <form asp-controller="Payement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Resident..." asp-for="SearchResident" aria-label="Resident">
+                </form>
+            </div>
+            <div class="col-3 text-end">
+                <form asp-controller="Payement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date">
+                </form>
+            </div>
+
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Chambre</th>
+                    <th class="text-center align-middle">Résident</th>
+                    <th class="text-center align-middle">Date</th>
+                    <th class="text-center align-middle">Début occupation</th>
+                    <th class="text-center align-middle">Fin occupation</th>
+                    <th class="text-center align-middle">Statut</th>
+                    <th class="text-center align-middle">Caution</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reservation in Model.Reservation)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@reservation.Agent.NomAgent @reservation.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@reservation.Chambre.NumeroChambre @reservation.Chambre.TypeChambre</td>
+                        <td class="text-center align-middle">@reservation.Resident.NomClient @reservation.Resident.SexeClient</td>
+                        <td class="text-center align-middle">@reservation.DateReservation.ToShortDateString() @reservation.HeureReservation.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@reservation.DateDebutOccupation.ToShortDateString() @reservation.HeureDebutOccupation.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@reservation.DateFinOccupation.ToShortDateString() @reservation.HeureFinOccupation.ToShortTimeString()</td>
+                        <td class="text-center align-middle">
+                            @if (reservation.StatutReservation == "Annule" || reservation.StatutReservation == "Termine")
+                            {<span class="badge text-bg-danger rounded-pill">@reservation.StatutReservation</span> }
+                        else
+                        {<span class="badge text-bg-success rounded-pill">@reservation.StatutReservation</span>}
+                    </td>
+                    <td class="text-center align-middle">@reservation.CautionReservation.00 $</td>
+
+                    <td class="text-center align-middle">
+                        <div class="d-flex justify-content-center gap-2" role="group">
+                            <a asp-controller="Payement" asp-action="Payer" asp-route-reservationId="@reservation.ReservationId" class="btn btn-success">
+                                <i class="bi bi-cash-stack"></i> Payement
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                ViewBag.NumAff++;
+
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

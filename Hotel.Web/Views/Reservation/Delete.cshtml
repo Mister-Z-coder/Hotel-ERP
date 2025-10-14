@@ -1,0 +1,106 @@
+﻿@model ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Annuer Reservation</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Reservations.ReservationId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ResidentId" disabled class="form-select border" asp-items="Model.ResidentList">
+                        <option disabled selected>--Selectionnez le resident--</option>
+                    </select>
+                    <label asp-for="Reservations.ResidentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.AgentId" class="form-control border" />
+                    <label asp-for="Reservations.AgentId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ChambreId" disabled class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="Reservations.ChambreId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.ChambreId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateFinOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureFinOccupation" class="m-2"></label>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.StatutReservation" disabled id="TypeClient" class="form-select border">
+                        <option disabled selected>--Selectionnez le statut de la reservation--</option>
+                        <option>CONFIRME</option>
+                        <option>ANNULE</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.StatutReservation" class="form-control border" />
+                    <label asp-for="Reservations.StatutReservation" class="m-2"></label>
+                </div>
+
+
+
+
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Reservations.CautionReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.CautionReservation" class="m-2"></label>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Annuler reservation
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Reservation" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

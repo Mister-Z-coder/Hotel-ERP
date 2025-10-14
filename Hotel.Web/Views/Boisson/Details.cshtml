@@ -1,0 +1,170 @@
+﻿@model BoissonViewModel
+@{
+    ViewData["Title"] = "Boisson";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Details Boisson</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Boisson.BoissonId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="row">
+                    <div class="form-floating py-1 col-8">
+                        <div class="form-floating py-1 col-12">
+                            <select asp-for="Boisson.BrasserieId" disabled class="form-select border" asp-items="Model.BrasserieList">
+                                <option disabled selected>--Selectionnez la brasserie--</option>
+                            </select>
+                            <input type="hidden" asp-for="Boisson.BrasserieId" class="form-control border" />
+                            <label asp-for="Boisson.BrasserieId" class="m-2"></label>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            <select asp-for="Boisson.CategorieBoissonId" disabled class="form-select border" asp-items="Model.CategorieBoissonList">
+                                <option disabled selected>--Selectionnez la categorie boisson--</option>
+                            </select>
+                            <input type="hidden" asp-for="Boisson.CategorieBoissonId" class="form-control border" />
+                            <label asp-for="Boisson.CategorieBoissonId" class="m-2"></label>
+                        </div>
+
+
+                        <div class="form-floating py-1 col-12">
+                            <input asp-for="Boisson.TitreBoisson" disabled class="form-control border" />
+                            <label asp-for="Boisson.TitreBoisson" class="m-2"></label>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            <select asp-for="Boisson.UniteBoisson" disabled class="form-select border">
+                                <option disabled selected>--Selectionnez l'unité de la boisson--</option>
+                                <option>SACHET</option>
+                                <option>CARTON</option>
+                                <option>BOITE</option>
+                                <option>PALETTE</option>
+                                <option>BOUTEILLE</option>
+                                <option>CANETTE</option>
+                                <option>PAQUET</option>
+                                <option>BARQUETTE</option>
+                                <option>TONNEAU</option>
+                                <option>SAC</option>
+                                <option>CAISSE</option>
+                                <option>FUT</option>
+                                <option>BARRE</option>
+                                <option>PLATEAU</option>
+                                <option>VRAC</option>
+                            </select>
+                            <label asp-for="Boisson.UniteBoisson" class="m-2"></label>
+                            <span asp-validation-for="Boisson.UniteBoisson" class="text-danger"></span>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            <input type="number" asp-for="Boisson.PrixUnitSB" disabled class="form-control border" />
+                            <label asp-for="Boisson.PrixUnitSB" class="m-2"></label>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            <input type="number" asp-for="Boisson.PrixUnitLB" disabled class="form-control border" />
+                            <label asp-for="Boisson.PrixUnitLB" class="m-2"></label>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            <input type="number" asp-for="Boisson.QuantiteStock" disabled class="form-control border" />
+                            <label asp-for="Boisson.QuantiteStock" class="m-2"></label>
+                        </div>
+                    </div>
+                    <div class="form-floating py-1 col-4">
+                        <div style="max-width: auto;">
+                            <img src="@Url.Content("~/"+Model.Boisson.PhotoPath)" alt="Photo de la boisson" class="img-fluid" style="width: auto; height: 240px; object-fit: cover;" onclick="openModal(this.src)" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Première table -->
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Historique Prix Unitaire LB</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Date historique</th>
+                                    <th>Prix LB ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 1;
+                                }
+                                @foreach (var boisson in Model.HPrixUnitLBBoissonList)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>@boisson.DateHisto</td>
+                                        <td>@boisson.PrixUnitLB.00 $</td>
+                                    </tr>
+                                    i++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Deuxième table -->
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Historique Prix Unitaire SB</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>N°</th>
+                                    <th>Date historique</th>
+                                    <th>Prix SB ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int j = 1;
+                                }
+                                @foreach (var boisson in Model.HPrixUnitSBBoissonList)
+                                {
+                                    <tr>
+                                        <td>@j</td>
+                                        <td>@boisson.DateHisto</td>
+                                        <td>@boisson.PrixUnitSB.00 $</td>
+                                    </tr>
+                                    j++;
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Boisson" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

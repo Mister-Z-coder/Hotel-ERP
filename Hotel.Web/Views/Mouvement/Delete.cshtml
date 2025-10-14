@@ -1,0 +1,69 @@
+﻿@model DemandeViewModel
+@{
+    ViewData["Title"] = "Demande";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Supprimer Demande</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="Demandes.DemandeId" hidden />
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Demandes.AgentId" class="form-control border" />
+                    <label asp-for="Demandes.AgentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Demandes.DateDemande" disabled class="form-control border" />
+                    <label asp-for="Demandes.DateDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.TypeDemande" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez le type de demande--</option>
+                        <option>APPROVISIONNEMENT</option>
+                        <option>AJOUT</option>
+                    </select>
+                    <input asp-for="Demandes.TypeDemande" hidden />
+                    <label asp-for="Demandes.TypeDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input disabled asp-for="Demandes.EtatDemande" class="form-control border" />
+                    <input asp-for="Demandes.EtatDemande" hidden />
+                    <label asp-for="Demandes.EtatDemande" class="m-2"></label>
+                </div>
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-trash-fill"></i> Supprimer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Demande" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

@@ -1,0 +1,217 @@
+﻿@model ReservationViewModel
+@{
+    ViewData["Title"] = "Reservation";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Payer Reservation</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input id ="numReservationReglement" asp-for="Reservations.ReservationId" hidden />
+            <div class="p-3">
+                <div class="form-floating py-3 col-12">
+                    <div class="alert alert-info" role="alert">
+                        <strong>N.B :</strong>
+                        <ul class="mb-0">
+                            <li>Soyez sûr d'avoir ajouté tout les services nécessaires au resident, en cas d'omission d'un service, le payement de ce dernier devra se faire à la caisse</li>
+                            <li>Si la durée est &lt; 12h → Réservation à l'heure</li>
+                            <li>Si la durée &gt;= 12h OU inclut la nuit (minuit) → Réservation à la nuit</li>
+                        </ul>
+                    </div>
+                </div>
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.AgentId" class="form-control border" />
+                    <label asp-for="Reservations.AgentId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ChambreId" disabled class="form-select border" asp-items="Model.ChambreList">
+                        <option disabled selected>--Selectionnez la chambre--</option>
+                    </select>
+                    <label asp-for="Reservations.ChambreId" class="m-2"></label>
+                    <span asp-validation-for="Reservations.ChambreId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.ResidentId" disabled class="form-select border" asp-items="Model.ResidentList">
+                        <option disabled selected>--Selectionnez le resident--</option>
+                    </select>
+                    <label asp-for="Reservations.ResidentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureReservation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureDebutOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureDebutOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="Reservations.DateFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.DateFinOccupation" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="Reservations.HeureFinOccupation" disabled class="form-control border" />
+                    <label asp-for="Reservations.HeureFinOccupation" class="m-2"></label>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Reservations.StatutReservation" disabled id="TypeClient" class="form-select border">
+                        <option disabled selected>--Selectionnez le statut de la reservation--</option>
+                        <option>CONFIRME</option>
+                        <option>ANNULE</option>
+                    </select>
+                    <input type="hidden" asp-for="Reservations.StatutReservation" class="form-control border" />
+                    <label asp-for="Reservations.StatutReservation" class="m-2"></label>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="Reservations.CautionReservation" disabled class="form-control border" />
+                    <label asp-for="Reservations.CautionReservation" class="m-2"></label>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Services inclus</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center align-middle">N°</th>
+                                        <th class="text-center align-middle">Titre Service</th>
+                                        <th class="text-center align-middle">Prix Service</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int j = 1;}
+                                    @foreach (var inclure in Model.Inclures)
+                                    {
+                                        <tr data-id="@inclure.Service.ServiceId" class="service-row">
+                                            <td class="text-center align-middle fw-bold">@j</td>
+                                            <td class="text-center align-middle">@inclure.Service.NomService</td>
+                                            <td class="text-center align-middle">@inclure.Service.PrixService.00 $</td>
+                                        </tr>
+                                        j++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row pt-2">
+                        <div class="col-6 col-md-3">
+                            <a class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#staticBackdropReglement">
+                                <i class="bi bi-cash-stack"></i> Payer
+                            </a>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="Payement" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Modal règlement) -->
+
+                    <div class="modal fade" id="staticBackdropReglement" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropRecuLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content rounded-3 shadow">
+                                <div class="modal-body p-4 text-center">
+                                    <h5 class="mb-0">Payer reservation N° @Model.Reservations.ReservationId</h5>
+
+                                    <p class="mb-0">En validant la reservation, vous pourrez imprimer la facture.</p>
+                                    <!-- Champ pour le mode de règlement -->
+                                    <div class="form-floating py-1 col-12">
+                                        <select class="form-select border" id="selectedmreglement" required>
+                                            <option disabled selected>--Sélectionnez le mode de règlement--</option>
+                                            @foreach (var modereglement in (List<Hotel.Models.ModeReglement>)ViewData["ModeReglementList"])
+                                            {
+                                                <option value="@modereglement.ModeReglementId">@modereglement.TitreModeReglement</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <!--Champ pour la devise-->
+                                    <div class="form-floating py-1 col-12">
+                                        <select class="form-select border" id="selecteddevise" required>
+                                            <option disabled selected>--Sélectionnez la devise--</option>
+                                            @foreach (var devise in (List<Hotel.Models.Devise>)ViewData["DeviseList"])
+                                            {
+                                                <option value="@devise.DeviseId">@devise.TitreDevise (@devise.SigleDevise)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <!--Champ pour le type de règlement-->
+                                    <div class="form-floating py-1 col-12">
+                                        <select class="form-select border" id="selectedtreglement" required>
+                                            <option disabled selected>--Sélectionnez le type de règlement--</option>
+                                            @foreach (var typereglement in (List<Hotel.Models.TypeReglement>)ViewData["TypeReglementList"])
+                                            {
+                                                <option value="@typereglement.TypeReglementId">@typereglement.TitreTypeReglement</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <!--Champ pour le poste de travail-->
+                                    <div class="form-floating py-1 col-12">
+                                        <select class="form-select border" id="selectedcaisse" required>
+                                            @foreach (var caisse in (List<Hotel.Models.CaisseDetail>)ViewData["Caisse"])
+                                            {
+                                                <option selected value="@caisse.CaisseId">@caisse.TitreCaisse</option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!--Champ pour le motif règlement-->
+
+                                    <div class="form-floating py-1 col-12">
+                                        <div class="input-group mb-3">
+                                            <textarea type="text" readonly class="form-control border" id="motifreglement" placeholder="Motif de règlement" style="max-height:100px; min-height:100px;">Reglement</textarea>
+                                        </div>
+                                    </div>
+                                    <!-- ... -->
+                                    <h4 class="text-white bg-dark p-2 rounded text-center fw-bold">
+                                        <input type="text" class="border-0 text-capitalize bg-transparent text-white text-center fw-bold" id="totalReservationReglement" value = "@ViewBag.PrixTotal.00 $" readonly>
+                                    </h4>
+                                </div>
+                                <div class="modal-footer flex-nowrap p-0">
+                                    <a class="btn btn-lg btn-success fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" onclick="sendSelectedReservation()">Confirmer le règlement</a>
+                                    <a class="btn btn-lg btn-danger fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Annuler</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                    
+</form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

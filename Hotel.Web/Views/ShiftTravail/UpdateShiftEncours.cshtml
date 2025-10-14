@@ -1,0 +1,73 @@
+﻿@model ShiftTravailViewModel
+@{
+    ViewData["Title"] = "Shift Travail";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Mettre à jour @ViewData["Title"]</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <input asp-for="ShiftTravail.ShiftTravailId" hidden />
+
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="ShiftTravail.AgentId" class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <label asp-for="ShiftTravail.AgentId" class="m-2"></label>
+                    <span asp-validation-for="ShiftTravail.AgentId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="ShiftTravail.PosteTravailId" class="form-select border" asp-items="Model.PosteTravailList">
+                        <option disabled selected>--Selectionnez le poste de travail--</option>
+                    </select>
+                    <label asp-for="ShiftTravail.PosteTravailId" class="m-2"></label>
+                    <span asp-validation-for="ShiftTravail.PosteTravailId" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" asp-for="ShiftTravail.DateDebutShift" class="form-control border" />
+                    <label asp-for="ShiftTravail.DateDebutShift" class="m-2"></label>
+                    <span asp-validation-for="ShiftTravail.DateDebutShift" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="time" asp-for="ShiftTravail.HeureDebutShift" class="form-control border" />
+                    <label asp-for="ShiftTravail.HeureDebutShift" class="m-2"></label>
+                    <span asp-validation-for="ShiftTravail.HeureDebutShift" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="ShiftTravail.ObservationDebutShift" class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="ShiftTravail.ObservationDebutShift" class="m-2"></label>
+                    <span asp-validation-for="ShiftTravail.ObservationDebutShift" class="text-danger"></span>
+                </div>
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Mettre à jour
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="ShiftTravail" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

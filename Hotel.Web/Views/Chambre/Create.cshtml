@@ -1,0 +1,86 @@
+﻿@model Chambre
+@{
+    ViewData["Title"] = "Chambre";
+}
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Nouvelle Chambre</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <div asp-validation-summary="None"></div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="NumeroChambre" class="form-control border" />
+                    <label asp-for="NumeroChambre" class="m-2"></label>
+                    <span asp-validation-for="NumeroChambre" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="TypeChambre" class="form-control border" />
+                    <label asp-for="TypeChambre" class="m-2"></label>
+                    <span asp-validation-for="TypeChambre" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="PrixNuit" class="form-control border" />
+                    <label asp-for="PrixNuit" class="m-2"></label>
+                    <span asp-validation-for="PrixNuit" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="PrixHeure" class="form-control border" />
+                    <label asp-for="PrixHeure" class="m-2"></label>
+                    <span asp-validation-for="PrixHeure" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12" hidden>
+                    <div class="border p-3 rounded">
+                        <label asp-for="StatutChambre" class="form-label text-muted"></label>
+                        <div class="form-check">
+                            <input asp-for="StatutChambre" class="form-check-input" type="radio" id="libre" value="Libre|Sale">
+                            <label class="form-check-label" for="libre">
+                                Libre
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="StatutChambre" class="form-check-input" type="radio" id="occupe" value="Occupe|Sale">
+                            <label class="form-check-label" for="occupe">
+                                Occupée
+                            </label>
+                        </div>
+                        <span asp-validation-for="StatutChambre" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="number" asp-for="CapaciteMaxChambre" class="form-control border" />
+                    <label asp-for="CapaciteMaxChambre" class="m-2"></label>
+                    <span asp-validation-for="CapaciteMaxChambre" class="text-danger"></span>
+                </div>
+
+
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Créer
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-controller="Chambre" asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Annuler
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+

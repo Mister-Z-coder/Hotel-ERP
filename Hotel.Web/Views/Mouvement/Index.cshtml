@@ -1,0 +1,133 @@
+﻿@model MouvementViewModel
+@{
+    ViewData["Title"] = "Mouvements";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Mouvements</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="col-2 text-end">
+                <form asp-controller="Mouvement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent" id="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Mouvement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Type..." asp-for="SearchType" aria-label="Type" id="Type">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Mouvement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Nature..." asp-for="SearchNature" aria-label="Nature" id="Nature">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Mouvement" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date" id="Date">
+                </form>
+            </div>
+            <div class="col-4 text-end">
+                <button type="button" class="btn btn-secondary" onclick="SelectedMouvement()">
+                    <i class="bi bi-printer"></i>
+                    Rapport
+                </button>
+            </div>
+
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Type</th>
+                    <th class="text-center align-middle">Date - Heure</th>
+                    <th class="text-center align-middle">Nature</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var mouvement in Model.Mouvement)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@mouvement.Agent.NomAgent @mouvement.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@mouvement.TypeMouvement.TitreTypeMouvement</td>
+                        <td class="text-center align-middle">@mouvement.DateMouvement.ToShortDateString() - @mouvement.HeureMouvement.ToShortTimeString()</td>
+                        <td class="text-center align-middle">@mouvement.NatureMouvement</td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+
+                                @if (mouvement.NatureMouvement.ToUpper() == "LIVRAISON")
+                                {
+                                    <a asp-controller="Mouvement" asp-action="DetailsLivraison" asp-route-mouvementId="@mouvement.MouvementId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i>  Détails
+                                    </a>
+                                }
+                                else if (mouvement.NatureMouvement.ToUpper() == "SORTIE POUR AJOUT")
+                                {
+                                    <a asp-controller="Mouvement" asp-action="DetailsSortie" asp-route-mouvementId="@mouvement.MouvementId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i>  Détails
+                                    </a>
+                                }
+                                else if (mouvement.NatureMouvement.ToUpper() == "DECLASSEMENT")
+                                {
+                                    <a asp-controller="Mouvement" asp-action="DetailsDeclassement" asp-route-mouvementId="@mouvement.MouvementId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i>  Détails
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Mouvement" asp-action="Details" asp-route-mouvementId="@mouvement.MouvementId" class="btn btn-warning text-white">
+                                        <i class="bi bi-info-circle"></i>  Détails
+                                    </a>
+                                }
+                                @*<a asp-controller="Mouvement" asp-action="Delete" asp-route-mouvementId="@mouvement.MouvementId" class="btn btn-danger">
+                                        <i class="bi bi-trash-fill"></i> Supprimer
+                                    </a>*@
+
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}

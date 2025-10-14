@@ -1,0 +1,151 @@
+﻿@model DemandeViewModel
+@{
+    ViewData["Title"] = "Demandes";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Liste des Demandes</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <div class="row pb-3">
+            <div class="form-floating py-3 col-12">
+                <div class="alert alert-info" role="alert">
+                    <strong>Différents états d'une demande :</strong>
+                    <span class="badge text-bg-warning rounded-pill">Brouillon</span>,
+                    <span class="badge text-bg-info rounded-pill">Validée</span>,
+                    <span class="badge text-bg-success rounded-pill">Livré</span>,
+                    <span class="badge text-bg-success rounded-pill">Sortie</span>.
+                    <ul class="mb-0">
+                        <li>
+                            <p>
+                                <span class="badge text-bg-warning rounded-pill">Brouillon</span> : C'est l'état initial d'une demande quelle qu'elle soit (approvisionnement ou ajout).
+                                Elle indique que la demande ne contient aucun produit (boisson, aliment) conformement au type de la demande.
+                            </p>
+                        <li>
+                            <p><span class="badge text-bg-info rounded-pill">Validée</span> : C'est l'état second d'une demnade au dès l'instant où elle porte des produits.</p>
+                        </li>
+                        <li>
+                            <p><span class="badge text-bg-success rounded-pill">Livré</span> : C'est l'état final d'une demande d'approvisionnement, cela signifie que les produits qui ont été portés par la dite demande d'approvisionnement ont tous été livrés.</p>
+                        </li>
+                        <li>
+                            <p><span class="badge text-bg-success rounded-pill">Sortie</span>: C'est l'état final d'une demande d'ajout, cela signifie que les produits qui ont été portés par la dite demande d'ajout ont tous été ajoutés au stock.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Demande" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Agent..." asp-for="SearchAgent" aria-label="Agent" id="Agent">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Demande" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Type..." asp-for="SearchType" aria-label="Type" id="Type">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Demande" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="Etat..." asp-for="SearchEtat" aria-label="Etat" id="Etat">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <form asp-controller="Demande" asp-action="Index" class="col-12 col-lg-auto mb-3 mb-lg-0" method="get">
+                    <input type="search" class="form-control" placeholder="jj/mm/aaaa" asp-for="SearchDate" aria-label="Date" id="Date">
+                </form>
+            </div>
+            <div class="col-2 text-end">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="SelectedDemande()">
+                    <i class="bi bi-printer"></i>
+                    Rapport
+                </button>
+            </div>
+            <div class="col-2 text-end">
+                <a class="btn btn-secondary btn-sm" asp-controller="Demande" asp-action="Create">
+                    <i class="bi bi-plus-circle"></i>
+                    Nouvelle Demande
+                </a>
+            </div>
+        </div>
+
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center align-middle">N°</th>
+                    <th class="text-center align-middle">Agent</th>
+                    <th class="text-center align-middle">Date demande</th>
+                    <th class="text-center align-middle">Type demande</th>
+                    <th class="text-center align-middle">Etat demande</th>
+                    <th class="text-center align-middle">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var demande in Model.Demande)
+                {
+                    <tr>
+                        <td class="text-center align-middle fw-bold">@ViewBag.NumAff</td>
+                        <td class="text-center align-middle">@demande.Agent.NomAgent @demande.Agent.PrenomAgent</td>
+                        <td class="text-center align-middle">@demande.DateDemande.ToShortDateString()</td>
+                        <td class="text-center align-middle">@demande.TypeDemande</td>
+                        <td class="text-center align-middle">
+                            @if (demande.EtatDemande == "Brouillon")
+                            {<span class="badge text-bg-warning rounded-pill">@demande.EtatDemande</span>}
+                        else if (demande.EtatDemande == "Validée")
+                        {<span class="badge text-bg-info rounded-pill">@demande.EtatDemande</span>}
+                    else
+                    {<span class="badge text-bg-success rounded-pill">@demande.EtatDemande</span>}
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="d-flex justify-content-center gap-2" role="group">
+                                <a asp-controller="Demande" asp-action="Details" asp-route-demandeId="@demande.DemandeId" class="btn btn-warning text-white">
+                                    <i class="bi bi-info-circle"></i>  Détails
+                                </a>
+                                <a asp-controller="Demande" asp-action="Associer" asp-route-demandeId="@demande.DemandeId" class="btn btn-info btn-sm @(demande.EtatDemande == "Brouillon" || demande.EtatDemande == "Validée" ? "" : "disabled")">
+                                    <i class="bi bi-pin-angle-fill"></i>  Valider
+                                </a>
+                                <a asp-controller="Demande" asp-action="Update" asp-route-demandeId="@demande.DemandeId" class="btn btn-success btn-sm @(demande.EtatDemande == "Brouillon" ? "" : "disabled")">
+                                    <i class="bi bi-pencil-square"></i>  Modifier
+                                </a>
+                                <a asp-controller="Demande" asp-action="Delete" asp-route-demandeId="@demande.DemandeId" class="btn btn-danger btn-sm @(demande.EtatDemande == "Brouillon" || demande.EtatDemande == "Validée" ? "" : "disabled")">
+                                    <i class="bi bi-trash-fill"></i>  Supprimer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    ViewBag.NumAff++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer border-0 p-4">
+        <div class="row">
+            <div class="col-6 text-left">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item @(ViewBag.Currentpage==1 ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage -1)">Précedent</a>
+                        </li>
+
+                        <li class="page-item"><a class="page-link" href="#">@ViewBag.CurrentPage</a></li>
+
+                        <li class="page-item @(ViewBag.TotalPage<=ViewBag.CurrentPage ? "disabled" : "active")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@(ViewBag.CurrentPage +1)">Suivant</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}

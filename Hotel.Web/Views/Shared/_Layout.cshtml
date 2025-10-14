@@ -1,0 +1,321 @@
+﻿
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Binga Mopepe House</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/toastr.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/toastr.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/select2.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/select2.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="icon" href="~/ico-bingahouse.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="~/ico-bingahouse.ico" type="image/x-icon" />
+    @*<style>
+            html, body {
+                height: 100%;
+                margin: 0;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .container {
+                flex: 1;
+            }
+        </style>*@
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm bg-dark-subtle border-bottom box-shadow mb-3">
+            <div class="container justify-content-center">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/new-logo-bingahouse.png" style="width:50px" alt="Logo Bingahouse" />
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center">
+                    <ul class="navbar-nav flex-grow-1 justify-content-center">
+                        <li class="nav-item me-2 text-center">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-fill"></i> <br> Acceuil
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-building"></i> <br> Tiers
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Client" asp-action="Index">
+                                        <i class="bi bi-people-fill m-1"></i>  Clients
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Fournisseur" asp-action="Index">
+                                        <i class="bi bi-person-rolodex m-1"></i>  Fournisseurs
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item me-2 text-center">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Service" asp-action="Index">
+                                <i class="bi bi-bricks"></i> <br> Services
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-grid"></i> <br> Produits
+                            </a>
+                            <ul class="dropdown-menu" style="min-width: 250px;">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Boisson" asp-action="Index">
+                                        <i class="bi bi-cup-straw m-1"></i>  Boissons
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Aliment" asp-action="Index">
+                                        <i class="bi bi-cookie m-1"></i>  Aliments
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Brasserie" asp-action="Index">
+                                        <i class="bi bi-boxes m-1"></i>  Brasseries
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="CategorieBoisson" asp-action="Index">
+                                        <i class="bi bi-tags-fill m-1"></i>  Catégories Boisson
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center" >
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-boxes"></i> <br> Stock
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Demande" asp-action="Index">
+                                        <i class="bi bi-wallet-fill m-1"></i>  Demandes
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Mouvement" asp-action="Index">
+                                        <i class="bi bi-arrow-down-up m-1"></i>  Mouvements
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Livraison" asp-action="Index">
+                                        <i class="bi bi-truck m-1"></i>  Livraisons
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="SortieAjout" asp-action="Index">
+                                        <i class="bi bi-cart-check-fill m-1"></i>  Sorties
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Declassement" asp-action="Index">
+                                        <i class="bi bi-cart-x-fill m-1"></i>  Declassement
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-vcard-fill"></i> <br> Agents
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Agent" asp-action="Index">
+                                        <i class="bi bi-person-vcard-fill m-1"></i>  Agents
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ShiftTravail" asp-action="Index">
+                                        <i class="bi bi-signpost-split-fill m-1"></i>  Shifts Travail
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">
+                                        <i class="bi bi-person-circle m-1"></i>  Utilisateurs
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item me-4 text-center">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Reglement" asp-action="Index">
+                                <i class="bi bi-cash-stack"></i> <br> Règlements
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-moon-stars-fill"></i> <br> Chambres
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Chambre" asp-action="Index">
+                                        <i class="bi bi-moon-stars-fill m-1"></i>  Chambres
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Maintenance" asp-action="Index">
+                                        <i class="bi bi-magic m-1"></i>  Maintenances
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown me-2 text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-calendar-date-fill"></i> <br> Réservations
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Index">
+                                        <i class="bi bi-calendar-date-fill m-1"></i>  Réservations
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Payement" asp-action="Index">
+                                        <i class="bi bi-cash-stack m-1"></i> Payements
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <li class="nav-item me-2 text-center">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="PointdeVente" asp-action="Index">
+                                <i class="bi bi-pc-display-horizontal"></i> <br> Caisses
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown text-center">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-wide-connected m-1"></i> <br> Configurations
+                            </a>
+                            <ul class="dropdown-menu" style="min-width: 200px;">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Devise" asp-action="Index">
+                                        <i class="bi bi-cash-coin m-1"></i>  Devises
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Taux" asp-action="Index">
+                                        <i class="bi bi-currency-exchange m-1"></i>  Taux
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PosteTravail" asp-action="Index">
+                                        <i class="bi bi-person-workspace m-1"></i>  Postes Travails
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Caisse" asp-action="Index">
+                                        <i class="bi bi-piggy-bank-fill m-1"></i>  Caisses
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="TypeReglement" asp-action="Index">
+                                        <i class="bi bi-wallet-fill m-1"></i>  Types Règlements
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="ModeReglement" asp-action="Index">
+                                        <i class="bi bi-credit-card-2-back-fill m-1"></i>  Mode Règlements
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="TypeMouvement" asp-action="Index">
+                                        <i class="bi bi-arrow-down-up m-1"></i>  Type Mouvement
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="TableClient" asp-action="Index">
+                                        <i class="bi bi-align-top m-1"></i>  Table Client
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="d-flex align-items-center ms-3">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="dropdown text-end">
+                            <a href="#" class="d-block text-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                @try
+                                {
+                                    string photoagent = User.Claims.FirstOrDefault(c => c.Type == "PhotoUser")?.Value;
+                                    if (photoagent is not null)
+                                    {
+                                        <img src="@Url.Content("~/images/agents/"+photoagent)" alt="Photo" width="32" height="32" class="rounded-circle m-2" />
+                                        <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/th.jpeg" width="32" height="32" class="rounded-circle m-2" alt="Photo" />
+                                        <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                    }
+                                }
+                                catch
+                                {
+                                    <img src="~/images/th.jpeg" width="32" height="32" class="rounded-circle m-2" alt="Photo" />
+                                    <span class="text-black fw-bold">@User.Identity.Name.ToUpper()</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu text-small">
+                                <form asp-controller="User" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item">Se déconnecter</button>
+                                </form>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dropdown text-end">
+                            <a href="#" class="d-block text-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="~/images/th.jpeg" alt="Photo" width="32" height="32" class="rounded-circle" />
+                            </a>
+                            <ul class="dropdown-menu text-small">
+                                <li><a class="dropdown-item" asp-controller="User" asp-action="Login">Se connecter</a></li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            <partial name="_Notification" />
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container text-center">
+            &copy; 2025 - Binga Mopepe house - By SkydomTechnologies - <a asp-area="" asp-controller="Home" asp-action="Privacy">Copyright</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/toastr.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/toastr.js"></script>
+    <script src="~/lib/bootstrap/dist/js/select2.js"></script>
+    <script src="~/lib/bootstrap/dist/js/select2.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

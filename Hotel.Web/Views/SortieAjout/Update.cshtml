@@ -1,0 +1,190 @@
+﻿@model DemandeViewModel
+@{
+    ViewData["Title"] = "Livraison";
+}
+
+<div class="w-100 card">
+    <div class="card-header bg-dark-subtle ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-black">Mettre à jour Sortie</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border-0 p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <div class="form-floating py-3 col-12">
+                    <div class="alert alert-info" role="alert">
+                        <strong>Différents états d'une demande :</strong>
+                        <span class="badge text-bg-warning rounded-pill">Brouillon</span>,
+                        <span class="badge text-bg-info rounded-pill">Validée</span>,
+                        <span class="badge text-bg-success rounded-pill">Livré</span>,
+                        <span class="badge text-bg-success rounded-pill">Sortie</span>.
+                        <ul class="mb-0">
+                            <li>
+                                <p>
+                                    <span class="badge text-bg-warning rounded-pill">Brouillon</span> : C'est l'état initial d'une demande quelle qu'elle soit (approvisionnement ou ajout).
+                                    Elle indique que la demande ne contient aucun produit (boisson, aliment) conformement au type de la demande.
+                                </p>
+                            <li>
+                                <p><span class="badge text-bg-info rounded-pill">Validée</span> : C'est l'état second d'une demnade au dès l'instant où elle porte des produits.</p>
+                            </li>
+                            <li>
+                                <p><span class="badge text-bg-success rounded-pill">Livré</span> : C'est l'état final d'une demande d'approvisionnement, cela signifie que les produits qui ont été portés par la dite demande d'approvisionnement ont tous été livrés.</p>
+                            </li>
+                            <li>
+                                <p><span class="badge text-bg-success rounded-pill">Sortie</span>: C'est l'état final d'une demande d'ajout, cela signifie que les produits qui ont été portés par la dite demande d'ajout ont tous été ajoutés au stock.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <input asp-for="Demandes.DemandeId" hidden />
+                <input asp-for="SortiePourAjouts.MouvementId" hidden />
+                <div asp-validation-summary="All"></div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.AgentId" disabled class="form-select border" asp-items="Model.AgentList">
+                        <option disabled selected>--Selectionnez l'agent--</option>
+                    </select>
+                    <input type="hidden" asp-for="Demandes.AgentId" class="form-control border" />
+                    <label asp-for="Demandes.AgentId" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input type="date" disabled asp-for="Demandes.DateDemande" class="form-control border" />
+                    <label asp-for="Demandes.DateDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="Demandes.TypeDemande" disabled class="form-select border">
+                        <option disabled selected>--Selectionnez le type de demande--</option>
+                        <option>APPROVISIONNEMENT</option>
+                        <option>AJOUT</option>
+                    </select>
+                    <label asp-for="Demandes.TypeDemande" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input disabled asp-for="Demandes.EtatDemande" class="form-control border" />
+                    <label asp-for="Demandes.EtatDemande" class="m-2"></label>
+                </div>
+
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="SortiePourAjouts.TypeMouvementId" disabled class="form-select border" asp-items="Model.TypeMouvementList">
+                        <option disabled selected>--Selectionnez le type de mouvement--</option>
+                    </select>
+                    <input type="hidden" asp-for="SortiePourAjouts.TypeMouvementId" class="form-control border" />
+                    <label asp-for="SortiePourAjouts.TypeMouvementId" class="m-2"></label>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="SortiePourAjouts.NatureMouvement" class="form-select border">
+                        <option selected>SORTIE POUR AJOUT</option>
+                    </select>
+                    <label asp-for="SortiePourAjouts.NatureMouvement" class="m-2"></label>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <textarea asp-for="SortiePourAjouts.MotifAjout" class="form-control border" style="max-height:100px; min-height:100px;"></textarea>
+                    <label asp-for="SortiePourAjouts.MotifAjout" class="m-2"></label>
+                    <span asp-validation-for="SortiePourAjouts.MotifAjout" class="text-danger"></span>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Aliments demandées</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.FournirList">
+                    </select>*@
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center align-middle">N°</th>
+                                        <th class="text-center align-middle">Titre aliment</th>
+                                        <th class="text-center align-middle">Quantité demandée</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int j = 1;
+                                        string type = "";
+                                        type = "aliment";}
+                                    @foreach (var comporter in Model.Comporter)
+                                    {
+                                        <tr>
+                                            <td class="text-center align-middle fw-bold">@j</td>
+                                            <td class="text-center align-middle">@comporter.Aliment.TitreAliment</td>
+                                            <td class="text-center align-middle">@comporter.QteOrdone</td>
+
+                                        </tr>
+                                        j++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card-header bg-dark-subtle ml-0 py-3">
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <h4 class="text-black">Boissons demandées</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-floating py-1 col-12">
+                            @*<select class="form-select border h-50" size="10" aria-label="size 3 select example" asp-items="Model.ProcurerList">
+                    </select>*@
+                            <table class="table table-bordered table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center align-middle">N°</th>
+                                        <th class="text-center align-middle">Titre boisson</th>
+                                        <th class="text-center align-middle">Quantité demandée</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ int i = 1;
+                                        type = "boisson";}
+                                    @foreach (var comprendre in Model.Comprendre)
+                                    {
+                                        <tr>
+                                            <td class="text-center align-middle fw-bold">@i</td>
+                                            <td class="text-center align-middle">@comprendre.Boisson.TitreBoisson</td>
+                                            <td class="text-center align-middle">@comprendre.QteDemande</td>
+                                        </tr>
+                                        i++;
+
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row pt-2">
+
+                        <div class="col-6 col-md-3">
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-check-circle"></i> Modifier
+                            </button>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <a asp-controller="SortieAjout" asp-action="Index" class="btn btn-secondary w-100">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                        </div>
+                    </div>
+
+</form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+}
+
